@@ -6,6 +6,7 @@ import session from "express-session";
 import passport from "passport";
 import cors from "cors";
 import path from "path";
+import authRoutes from "./src/routes/auth";
 
 dotenv.config();
 
@@ -34,6 +35,8 @@ app.use(
 app.use("/public", express.static(path.join(__dirname, "public")));
 app.use(passport.initialize());
 app.use(passport.session());
+
+app.use("api/auth", authRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
