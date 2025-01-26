@@ -7,6 +7,7 @@ import passport from "passport";
 import cors from "cors";
 import path from "path";
 import authRoutes from "./src/routes/auth";
+import "./src/auth/local-strategy";
 
 dotenv.config();
 
