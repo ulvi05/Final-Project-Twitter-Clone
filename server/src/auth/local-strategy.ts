@@ -25,7 +25,7 @@ export default passport.use(
     {
       usernameField: "email",
     },
-    async function (email, password, done) {
+    async function (email: any, password: any, done: any) {
       try {
         const user = await User.findOne({
           email,
