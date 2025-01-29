@@ -32,12 +32,33 @@ const signup = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Internal server error." });
   }
 };
+
 const login = async (req: Request, res: Response) => {
   res.json({
     message: `Welcome back, ${req.user?.name}`,
     user: req.user,
   });
 };
+
+const googleAuth = async (req: Request, res: Response): Promise<void> => {
+  try {
+    if (!req.user) {
+      res.status(401).json({ message: "Google authentication failed" });
+      return;
+    }
+
+    const googleUser = req.user as IUser;
+
+    res.json({
+      message: `Welcome, ${googleUser.name}`,
+      googleUser,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error." });
+  }
+};
+
 const logout = async (req: Request, res: Response) => {
   res.json({
     data: "You hit the logout endpoint",
@@ -47,5 +68,6 @@ const logout = async (req: Request, res: Response) => {
 export default {
   signup,
   login,
+  googleAuth,
   logout,
 };

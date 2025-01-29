@@ -1,4 +1,5 @@
 import express from "express";
+import passport from "passport";
 import authController from "../controllers/auth";
 import { authenticate } from "../middlewares/user";
 import validateSchema from "../middlewares/validator";
@@ -16,16 +17,15 @@ router.post("/signup", validateSchema(registerSchema), authController.signup);
 
 router.post("/logout", authController.logout);
 
-// router.post(
-//   "/forgot-password",
-//   validateSchema(forgotPasswordSchema),
-//   authController.forgotPassword
-// );
+router.get(
+  "/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
 
-// router.post(
-//   "/reset-password",
-//   validateSchema(resetPasswordSchema),
-//   authController.resetPassword
-// );
+router.get(
+  "/google/callback",
+  passport.authenticate("google", { failureRedirect: "/login" }),
+  authController.googleAuth
+);
 
 export default router;
