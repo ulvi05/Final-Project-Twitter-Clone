@@ -7,6 +7,7 @@ import passport from "passport";
 import cors from "cors";
 import path from "path";
 import authRoutes from "./src/routes/auth";
+import userRoutes from "./src/routes/users";
 import "./src/auth/local-strategy";
 
 dotenv.config();
@@ -37,7 +38,8 @@ app.use("/public", express.static(path.join(__dirname, "public")));
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use("api/auth", authRoutes);
+app.use("/auth", authRoutes);
+app.use("/users", authRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

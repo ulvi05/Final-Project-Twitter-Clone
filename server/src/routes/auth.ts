@@ -1,7 +1,7 @@
 import express from "express";
 import passport from "passport";
 import authController from "../controllers/auth";
-import { authenticate } from "../middlewares/user";
+import { authenticate, authorize } from "../middlewares/user";
 import validateSchema from "../middlewares/validator";
 import {
   forgotPasswordSchema,
@@ -17,6 +17,8 @@ router.post("/signup", validateSchema(registerSchema), authController.signup);
 
 router.post("/logout", authController.logout);
 
+router.get("/current-user", authorize({}), authController.currentUser);
+
 router.get(
   "/google",
   passport.authenticate("google", { scope: ["profile", "email"] })
@@ -26,6 +28,18 @@ router.get(
   "/google/callback",
   passport.authenticate("google", { failureRedirect: "/login" }),
   authController.googleAuth
+);
+
+router.post(
+  "/forgot-password",
+  validateSchema(forgotPasswordSchema),
+  authController.forgotPassword
+);
+
+router.post(
+  "/reset-password",
+  validateSchema(resetPasswordSchema),
+  authController.resetPassword
 );
 
 export default router;

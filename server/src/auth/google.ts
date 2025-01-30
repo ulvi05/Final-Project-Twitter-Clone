@@ -30,9 +30,9 @@ passport.use(
         });
 
         await newUser.save();
-        return done(null, newUser as IUser); // 💡 Hata burada düzeltildi
+        return done(null, newUser as IUser);
       } catch (error) {
-        return done(error, false); // 💡 `null` yerine `false` döndürülüyor
+        return done(error, false);
       }
     }
   )

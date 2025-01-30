@@ -37,6 +37,15 @@ export const registerSchema: Schema = {
       errorMessage: "Email is required",
     },
   },
+  username: {
+    in: ["body"],
+    isString: {
+      errorMessage: "Username must be a string",
+    },
+    notEmpty: {
+      errorMessage: "Username is required",
+    },
+  },
 };
 export const forgotPasswordSchema: Schema = {
   email: {
