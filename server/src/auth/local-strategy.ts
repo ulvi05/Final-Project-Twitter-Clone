@@ -30,7 +30,11 @@ export default passport.use(
         const user = await User.findOne({
           email,
         }).select("-resetPasswordToken -resetPasswordTokenExpires");
-        if (!user || !comparePasswords(password, user.password)) {
+        if (
+          !user ||
+          !user.password ||
+          !comparePasswords(password, user.password)
+        ) {
           return done(null, false, {
             message: "Invalid email or password",
           });

@@ -3,6 +3,22 @@ import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import User from "../mongoose/schema/user";
 import { IUser } from "../types/user";
 
+passport.serializeUser((user: any, done) => {
+  done(null, user._id);
+});
+
+passport.deserializeUser(async (id, done) => {
+  const user = await User.findById(id).select(
+    "-resetPasswordToken -resetPasswordTokenExpires"
+  );
+  if (!user) {
+    return done(new Error("User not found"));
+  }
+  const userObj: IUser = user.toObject();
+  delete userObj.password;
+  done(null, userObj);
+});
+
 passport.use(
   new GoogleStrategy(
     {
@@ -26,7 +42,6 @@ passport.use(
           email: profile.emails?.[0].value,
           name: profile.displayName,
           profileImage: profile.photos?.[0].value,
-          password: null,
         });
 
         await newUser.save();

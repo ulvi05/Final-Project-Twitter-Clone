@@ -9,6 +9,7 @@ import path from "path";
 import authRoutes from "./src/routes/auth";
 import userRoutes from "./src/routes/users";
 import "./src/auth/local-strategy";
+import "./src/auth/google";
 
 dotenv.config();
 
@@ -39,7 +40,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use("/auth", authRoutes);
-app.use("/users", authRoutes);
+app.use("/users", userRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

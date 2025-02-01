@@ -97,7 +97,7 @@ const forgotPassword = async (req: Request, res: Response) => {
       html: `
 <div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e1e8ed; border-radius: 10px; background-color: #ffffff;">
       <div style="text-align: center; padding: 20px 0;">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/c/ce/X_logo_2023.svg" 
+        <img src="/public/images/xlogo.png" 
              alt="X Logo" 
              style="width: 50px; height: 50px;">
       </div>
