@@ -1,11 +1,12 @@
 import express from "express";
-import { getUserProfile } from "../controllers/user";
+import { followUnfollowUser, getUserProfile } from "../controllers/user";
+import { authorize } from "../middlewares/user";
 
 const router = express.Router();
 
-router.get("/profile/:username", getUserProfile);
-router.get("/suggested", getUserProfile);
-// router.post("/follow/:id", followUnfollowUser);
+router.get("/profile/:username", authorize({}), getUserProfile);
+router.get("/suggested", authorize({}), getUserProfile);
+router.post("/follow/:id", authorize({}), followUnfollowUser);
 // router.post("/update", updateUserProfile);
 
 export default router;

@@ -51,9 +51,16 @@ const googleAuth = async (req: Request, res: Response): Promise<void> => {
 
     const googleUser = req.user as IUser;
 
-    res.json({
-      message: `Welcome, ${googleUser.name}`,
-      googleUser,
+    req.logIn(googleUser, (err) => {
+      if (err) {
+        console.error("Error in req.logIn:", err);
+        res.status(500).json({ message: "Login session error" });
+        return;
+      }
+      res.json({
+        message: `Welcome, ${googleUser.name}`,
+        googleUser,
+      });
     });
   } catch (error) {
     console.error(error);
@@ -91,22 +98,17 @@ const forgotPassword = async (req: Request, res: Response) => {
     user.resetPasswordTokenExpires = new Date(Date.now() + 3600000);
     await user.save();
     transporter.sendMail({
-      from: '"X" <agazadeulvi03@gmail.com>',
+      from: '"X Inc." <agazadeulvi03@gmail.com>',
       to: email,
       subject: "Reset your X password",
       html: `
 <div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e1e8ed; border-radius: 10px; background-color: #ffffff;">
-      <div style="text-align: center; padding: 20px 0;">
-        <img src="/public/images/xlogo.png" 
-             alt="X Logo" 
-             style="width: 50px; height: 50px;">
-      </div>
       <h2 style="color: #14171a; text-align: center;">Reset your password</h2>
       <p style="font-size: 16px; color: #657786; text-align: center;">
         We received a request to reset your X password. If you made this request, click the button below:
       </p>
       <div style="text-align: center; margin: 20px 0;">
-        <a href="${process.env.BASE_URL}/reset-password/${token}" 
+        <a href="http://localhost:5173/reset-password/${token}" 
            style="display: inline-block; padding: 12px 20px; font-size: 16px; color: white; background-color: #000000; text-decoration: none; border-radius: 5px; font-weight: bold;">
           Reset Password
         </a>

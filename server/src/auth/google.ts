@@ -2,6 +2,7 @@ import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import User from "../mongoose/schema/user";
 import { IUser } from "../types/user";
+import { hashPassword } from "../utils/bcrypt";
 
 passport.serializeUser((user: any, done) => {
   done(null, user._id);
@@ -33,15 +34,22 @@ passport.use(
           email: profile.emails?.[0].value,
         });
 
+        console.log(profile);
+
         if (existingUser) {
           return done(null, existingUser as IUser);
         }
 
+        const randomPassword = Math.random().toString(36).slice(-8);
+        const hashedPassword = hashPassword(randomPassword);
+
         const newUser = new User({
           username: profile.displayName,
           email: profile.emails?.[0].value,
+          password: hashedPassword,
           name: profile.displayName,
           profileImage: profile.photos?.[0].value,
+          googleId: profile?.id,
         });
 
         await newUser.save();
