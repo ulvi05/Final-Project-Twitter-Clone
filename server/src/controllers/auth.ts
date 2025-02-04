@@ -8,6 +8,11 @@ import crypto from "crypto";
 const signup = async (req: Request, res: Response) => {
   try {
     const user = req.matchedData;
+
+    if (!user.googleId) {
+      user.googleId = "";
+    }
+
     user.password = hashPassword(user.password);
     const userExist = await User.findOne({
       email: user.email,
@@ -42,7 +47,7 @@ const login = async (req: Request, res: Response) => {
   });
 };
 
-const googleAuth = async (req: Request, res: Response): Promise<void> => {
+const googleAuth = async (req: Request, res: Response) => {
   try {
     if (!req.user) {
       res.status(401).json({ message: "Google authentication failed" });

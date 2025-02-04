@@ -50,3 +50,14 @@ export const authenticate = (req: Request, res: Response, next: NextFunction) =>
       });
     }
   )(req, res, next);
+
+export const googleAuthenticate = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) =>
+  passport.authenticate("google", { scope: ["profile", "email"] })(
+    req,
+    res,
+    next
+  );
