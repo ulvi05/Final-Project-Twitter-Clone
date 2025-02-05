@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import User from "../mongoose/schema/user";
 import { IUser } from "../types/user";
 import Notification from "../mongoose/schema/notification";
+import { comparePasswords, hashPassword } from "../utils/bcrypt";
 
 const getUserProfile = async (req: Request, res: Response) => {
   try {
@@ -94,8 +95,56 @@ const getSuggestedUsers = async (req: Request, res: Response) => {
   }
 };
 
+const updateUser = async (req: Request, res: Response) => {
+  const { name, email, username, currentPassword, newPassword, bio, link } =
+    req.body;
+  let { profileImage, coverImage } = req.body;
+  const userId = req.user?._id;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      res.status(400).json({ message: "User not found" });
+      return;
+    }
+
+    if (
+      (!newPassword && currentPassword) ||
+      (!currentPassword && newPassword)
+    ) {
+      res.status(400).json({
+        error: "Please provide both current password and new password",
+      });
+      return;
+    }
+
+    if (user.googleId && email && email !== user.email) {
+      res.status(400).json({ error: "Google users cannot change their email" });
+      return;
+    }
+
+    if (currentPassword && newPassword) {
+      const isMatch = comparePasswords(currentPassword, user.password);
+      if (!isMatch) {
+        res.status(400).json({ error: "Current Password is incorrect" });
+        return;
+      }
+
+      if (newPassword.length < 6) {
+        res
+          .status(400)
+          .json({ error: "Password must be at least 6 characters long" });
+        return;
+      }
+
+      user.password = hashPassword(newPassword);
+    }
+  } catch (error) {}
+};
+
 export default {
   getUserProfile,
   followUnfollowUser,
   getSuggestedUsers,
+  updateUser,
 };
