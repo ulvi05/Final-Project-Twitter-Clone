@@ -6,12 +6,21 @@ import session from "express-session";
 import passport from "passport";
 import cors from "cors";
 import path from "path";
+import { v2 as cloudinary } from "cloudinary";
+
 import authRoutes from "./src/routes/auth";
 import userRoutes from "./src/routes/users";
+
 import "./src/auth/local-strategy";
 import "./src/auth/google";
 
 dotenv.config();
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 const PORT = process.env.PORT;
 

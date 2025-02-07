@@ -56,6 +56,10 @@ const userSchema = new mongoose.Schema(
       default: "",
       maxlength: 160,
     },
+    link: {
+      type: String,
+      default: "",
+    },
     resetPasswordToken: {
       type: String,
       default: null,

@@ -1,7 +1,10 @@
 import { Request, Response } from "express";
+import { v2 as cloudinary } from "cloudinary";
+
 import User from "../mongoose/schema/user";
-import { IUser } from "../types/user";
 import Notification from "../mongoose/schema/notification";
+
+import { IUser } from "../types/user";
 import { comparePasswords, hashPassword } from "../utils/bcrypt";
 
 const getUserProfile = async (req: Request, res: Response) => {
@@ -102,7 +105,7 @@ const updateUser = async (req: Request, res: Response) => {
   const userId = req.user?._id;
 
   try {
-    const user = await User.findById(userId);
+    let user = await User.findById(userId);
     if (!user) {
       res.status(400).json({ message: "User not found" });
       return;
@@ -139,7 +142,49 @@ const updateUser = async (req: Request, res: Response) => {
 
       user.password = hashPassword(newPassword);
     }
-  } catch (error) {}
+
+    if (profileImage) {
+      const profileImageUrl = user.profileImage
+        ? user.profileImage.split("/").pop()?.split(".")[0]
+        : null;
+
+      if (profileImageUrl) {
+        await cloudinary.uploader.destroy(profileImageUrl);
+      }
+
+      const uploadedResponse = await cloudinary.uploader.upload(profileImage);
+      profileImage = uploadedResponse.secure_url;
+    }
+
+    if (coverImage) {
+      const coverImageUrl = user.coverImage
+        ? user.coverImage.split("/").pop()?.split(".")[0]
+        : null;
+
+      if (coverImageUrl) {
+        await cloudinary.uploader.destroy(coverImageUrl);
+      }
+
+      const uploadedResponse = await cloudinary.uploader.upload(coverImage);
+      coverImage = uploadedResponse.secure_url;
+    }
+
+    user.name = name || user.name;
+    user.email = email || user.email;
+    user.username = username || user.username;
+    user.bio = bio || user.bio;
+    user.link = link || user.link;
+    user.profileImage = profileImage || user.profileImage;
+    user.coverImage = coverImage || user.coverImage;
+
+    user = await user.save();
+
+    res.status(200).json({ message: "User updated successfully", user });
+    return;
+  } catch (error) {
+    console.error("Error in updateUser: ", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 };
 
 export default {

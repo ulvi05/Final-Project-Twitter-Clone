@@ -10,15 +10,6 @@ export const registerSchema: Schema = {
       errorMessage: "Name is required",
     },
   },
-  surname: {
-    in: ["body"],
-    isString: {
-      errorMessage: "Surname must be a string",
-    },
-    notEmpty: {
-      errorMessage: "Surname is required",
-    },
-  },
   password: {
     in: ["body"],
     isString: {

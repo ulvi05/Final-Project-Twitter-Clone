@@ -75,7 +75,7 @@ const googleAuth = async (req: Request, res: Response) => {
 
 const logout = async (req: Request, res: Response) => {
   res.json({
-    data: "You hit the logout endpoint",
+    data: "Logout Successfully",
   });
 };
 
