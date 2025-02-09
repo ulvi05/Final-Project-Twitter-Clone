@@ -7,7 +7,11 @@ const userSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
-    googleId: { type: String, unique: true, sparse: true },
+    googleId: {
+      type: String,
+      unique: true,
+      sparse: true,
+    },
     email: {
       type: String,
       required: true,
@@ -68,6 +72,13 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+    likedPosts: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Post",
+        default: [],
+      },
+    ],
   },
   { timestamps: true }
 );

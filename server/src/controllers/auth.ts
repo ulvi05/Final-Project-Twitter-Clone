@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
 import { hashPassword } from "../utils/bcrypt";
-import User from "../mongoose/schema/user";
-import { IUser } from "../types/user";
 import { transporter } from "../utils/mail";
 import crypto from "crypto";
+
+import User from "../mongoose/schema/user";
+import { IUser } from "../types/user";
 
 const signup = async (req: Request, res: Response) => {
   try {
