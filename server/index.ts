@@ -11,6 +11,7 @@ import { v2 as cloudinary } from "cloudinary";
 import authRoutes from "./src/routes/auth";
 import userRoutes from "./src/routes/users";
 import postRoutes from "./src/routes/posts";
+import notificationRoutes from "./src/routes/notification";
 
 import "./src/auth/local-strategy";
 import "./src/auth/google";
@@ -52,6 +53,7 @@ app.use(passport.session());
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/posts", postRoutes);
+app.use("/notifications", notificationRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
