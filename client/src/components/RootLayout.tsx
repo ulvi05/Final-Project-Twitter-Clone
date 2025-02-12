@@ -3,9 +3,12 @@ import Sidebar from "./common/Sidebar";
 
 const RootLayout = () => {
   return (
-    <div>
+    <div className="flex min-h-screen">
       <Sidebar />
-      <Outlet />
+
+      <div className="flex justify-center flex-1">
+        <Outlet />
+      </div>
     </div>
   );
 };
