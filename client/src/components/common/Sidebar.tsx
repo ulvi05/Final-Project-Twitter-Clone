@@ -8,14 +8,14 @@ import { BiLogOut } from "react-icons/bi";
 
 const Sidebar = () => {
   const data = {
-    fullName: "John Doe",
-    username: "johndoe",
-    profileImg: "/avatars/boy1.png",
+    fullName: "Ulvi Aghazade",
+    username: "ulvi05",
+    profileImage: "src/assets/avatars/samurai.png",
   };
 
   return (
     <div className="md:flex-[2_2_0] w-18 max-w-52">
-      <div className="sticky top-0 left-0 flex flex-col w-20 h-screen border-r border-gray-700 md:w-full">
+      <div className="sticky top-0 left-0 flex flex-col w-20 h-screen pl-2 pr-2 border-r border-gray-700 md:w-full">
         <Link to="/" className="flex justify-center md:justify-start">
           <XSvg className="w-12 h-12 px-2 rounded-full fill-white hover:bg-stone-900" />
         </Link>
@@ -38,6 +38,15 @@ const Sidebar = () => {
               <span className="hidden text-lg md:block">Notifications</span>
             </Link>
           </li>
+          <li className="flex justify-center md:justify-start">
+            <Link
+              to="/notifications"
+              className="flex items-center gap-3 py-2 pl-2 pr-4 transition-all duration-300 rounded-full cursor-pointer hover:bg-stone-900 max-w-fit"
+            >
+              <IoNotifications className="w-6 h-6" />
+              <span className="hidden text-lg md:block">Messages</span>
+            </Link>
+          </li>
 
           <li className="flex justify-center md:justify-start">
             <Link
@@ -56,10 +65,10 @@ const Sidebar = () => {
           >
             <div className="hidden avatar md:inline-flex">
               <div className="w-8 rounded-full">
-                <img src={data?.profileImg || "/avatar-placeholder.png"} />
+                <img src={data?.profileImage || "/avatar-placeholder.png"} />
               </div>
             </div>
-            <div className="flex justify-between flex-1">
+            <div className="flex items-center justify-between flex-1">
               <div className="hidden md:block">
                 <p className="w-20 text-sm font-bold text-white truncate">
                   {data?.fullName}

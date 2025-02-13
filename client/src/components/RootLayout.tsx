@@ -1,14 +1,15 @@
 import { Outlet } from "react-router-dom";
 import Sidebar from "./common/Sidebar";
+import RightPanel from "./common/RightPanel";
 
 const RootLayout = () => {
   return (
-    <div className="flex min-h-screen">
+    <div className="flex max-w-6xl mx-auto">
       <Sidebar />
 
-      <div className="flex justify-center flex-1">
-        <Outlet />
-      </div>
+      <Outlet />
+
+      <RightPanel />
     </div>
   );
 };
