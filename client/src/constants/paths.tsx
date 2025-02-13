@@ -4,4 +4,5 @@ export const paths = {
   LOGIN: "/login",
   EXPLORE: "/explore",
   PROFILE: "/profile",
+  NOTIFICATION: "/notifications",
 };

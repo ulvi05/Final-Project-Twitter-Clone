@@ -3,7 +3,7 @@ import { useState } from "react";
 import Posts from "@/components/common/Posts";
 // import CreatePost from "./CreatePost";
 
-const ExplorePage = () => {
+const NotificationPage = () => {
   const [feedType, setFeedType] = useState("forYou");
 
   return (
@@ -39,4 +39,4 @@ const ExplorePage = () => {
     </>
   );
 };
-export default ExplorePage;
+export default NotificationPage;
