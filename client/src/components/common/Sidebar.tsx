@@ -5,6 +5,8 @@ import { IoNotifications } from "react-icons/io5";
 import { FaUser } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { BiLogOut } from "react-icons/bi";
+import { IoMdMail } from "react-icons/io";
+import { PiOpenAiLogoBold } from "react-icons/pi";
 
 const Sidebar = () => {
   const data = {
@@ -43,8 +45,17 @@ const Sidebar = () => {
               to="/notifications"
               className="flex items-center gap-3 py-2 pl-2 pr-4 transition-all duration-300 rounded-full cursor-pointer hover:bg-stone-900 max-w-fit"
             >
-              <IoNotifications className="w-6 h-6" />
+              <IoMdMail className="w-6 h-6" />
               <span className="hidden text-lg md:block">Messages</span>
+            </Link>
+          </li>
+          <li className="flex justify-center md:justify-start">
+            <Link
+              to="/grok"
+              className="flex items-center gap-3 py-2 pl-2 pr-4 transition-all duration-300 rounded-full cursor-pointer hover:bg-stone-900 max-w-fit"
+            >
+              <PiOpenAiLogoBold className="w-6 h-6" />
+              <span className="hidden text-lg md:block">ChatGPT</span>
             </Link>
           </li>
 

@@ -79,6 +79,31 @@ const RightPanel = () => {
           </div>
         )}
       </div>
+
+      {/* Footer */}
+      <div className="mt-4 text-xs text-gray-500">
+        <div className="flex flex-wrap gap-2">
+          <Link to="/terms" className="hover:underline">
+            Terms of Service
+          </Link>
+          <Link to="/privacy" className="hover:underline">
+            Privacy Policy
+          </Link>
+          <Link to="/cookies" className="hover:underline">
+            Cookie Policy
+          </Link>
+          <Link to="/accessibility" className="hover:underline">
+            Accessibility
+          </Link>
+          <Link to="/ads" className="hover:underline">
+            Ads info
+          </Link>
+          <Link to="/more" className="hover:underline">
+            More...
+          </Link>
+        </div>
+        <p className="mt-2">© 2025 X Corp.</p>
+      </div>
     </div>
   );
 };
