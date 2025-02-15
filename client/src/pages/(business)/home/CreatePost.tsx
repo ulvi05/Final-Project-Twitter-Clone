@@ -18,7 +18,7 @@ const CreatePost: React.FC<CreatePostProps> = () => {
   const isError = false;
 
   const data = {
-    profileImg: "src/assets/avatars/samurai.png",
+    profileImg: "/avatars/samurai.png",
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -57,7 +57,7 @@ const CreatePost: React.FC<CreatePostProps> = () => {
         {media && (
           <div className="relative mx-auto w-72">
             <IoCloseSharp
-              className="absolute top-0 right-0 w-5 h-5 text-white bg-gray-800 rounded-full cursor-pointer"
+              className="absolute top-0 right-0 w-5 h-5 p-0.5 text-white bg-gray-800 rounded-full cursor-pointer"
               onClick={() => {
                 setMedia(null);
                 setMediaType(null);
