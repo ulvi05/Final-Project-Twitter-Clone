@@ -6,7 +6,7 @@ const RightPanel = () => {
   const isLoading = false;
 
   return (
-    <div className="hidden mx-3 my-4 lg:block">
+    <div className="hidden mx-4 my-4 lg:block max-w-[350px]">
       <div className="mb-4 flex flex-col gap-2.5 border-[#16181c] border p-4 rounded-xl shadow-md items-start">
         <p className="text-lg font-extrabold text-white">
           Subscribe to Premium
@@ -80,30 +80,21 @@ const RightPanel = () => {
         )}
       </div>
 
-      {/* Footer */}
-      <div className="mt-4 text-xs text-gray-500">
-        <div className="flex flex-wrap gap-2">
-          <Link to="/terms" className="hover:underline">
-            Terms of Service
-          </Link>
-          <Link to="/privacy" className="hover:underline">
-            Privacy Policy
-          </Link>
-          <Link to="/cookies" className="hover:underline">
-            Cookie Policy
-          </Link>
-          <Link to="/accessibility" className="hover:underline">
-            Accessibility
-          </Link>
-          <Link to="/ads" className="hover:underline">
-            Ads info
-          </Link>
-          <Link to="/more" className="hover:underline">
-            More...
-          </Link>
-        </div>
-        <p className="mt-2">© 2025 X Corp.</p>
+      <div className="flex flex-wrap justify-center gap-3 mt-4 text-xs text-gray-500">
+        <Link to="/terms" className="hover:underline">
+          Terms of Service
+        </Link>
+        <Link to="/privacy" className="hover:underline">
+          Privacy Policy
+        </Link>
+        <Link to="/cookies" className="hover:underline">
+          Cookie Policy
+        </Link>
+        <Link to="/accessibility" className="hover:underline">
+          Accessibility
+        </Link>
       </div>
+      <p className="mt-1 text-xs text-center">© 2025 X Corp.</p>
     </div>
   );
 };

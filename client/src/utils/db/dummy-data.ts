@@ -5,7 +5,7 @@ export const POSTS = [
     img: "/posts/post1.png",
     user: {
       username: "ulvi05",
-      profileImage: "src/assets/avatars/samurai.png",
+      profileImage: "/avatars/samurai.png",
       fullName: "John Doe",
     },
     comments: [
@@ -14,7 +14,7 @@ export const POSTS = [
         text: "Nice Tutorial",
         user: {
           username: "janedoe",
-          profileImage: "src/assets/avatars/user-2.png",
+          profileImage: "/avatars/user-2.png",
           fullName: "Jane Doe",
         },
       },
@@ -26,7 +26,7 @@ export const POSTS = [
     text: "How you guys doing? 😊",
     user: {
       username: "johndoe",
-      profileImage: "src/assets/avatars/user-3.png",
+      profileImage: "/avatars/user-3.png",
       fullName: "John Doe",
     },
     comments: [
@@ -35,7 +35,7 @@ export const POSTS = [
         text: "Nice Tutorial",
         user: {
           username: "janedoe",
-          profileImage: "src/assets/avatars/user-2.png",
+          profileImage: "/avatars/user-2.png",
           fullName: "Jane Doe",
         },
       },
@@ -48,7 +48,7 @@ export const POSTS = [
     img: "/posts/post2.png",
     user: {
       username: "johndoe",
-      profileImage: "src/assets/avatars/user-2.png",
+      profileImage: "/avatars/user-2.png",
       fullName: "John Doe",
     },
     comments: [],
@@ -67,7 +67,7 @@ export const POSTS = [
     img: "/posts/post3.png",
     user: {
       username: "johndoe",
-      profileImage: "src/assets/avatars/user-2.png",
+      profileImage: "/avatars/user-2.png",
       fullName: "John Doe",
     },
     comments: [
@@ -76,7 +76,7 @@ export const POSTS = [
         text: "Nice Tutorial",
         user: {
           username: "janedoe",
-          profileImage: "src/assets/avatars/user-3.png",
+          profileImage: "/avatars/user-3.png",
           fullName: "Jane Doe",
         },
       },
@@ -100,24 +100,24 @@ export const USERS_FOR_RIGHT_PANEL = [
     _id: "1",
     fullName: "John Doe",
     username: "johndoe",
-    profileImage: "src/assets/avatars/user-3.png",
+    profileImage: "/avatars/user-3.png",
   },
   {
     _id: "2",
     fullName: "Jane Doe",
     username: "janedoe",
-    profileImage: "src/assets/avatars/user-2.png",
+    profileImage: "/avatars/user-2.png",
   },
   {
     _id: "3",
     fullName: "Bob Doe",
     username: "bobdoe",
-    profileImage: "src/assets/avatars/samurai.png",
+    profileImage: "/avatars/samurai.png",
   },
   {
     _id: "4",
     fullName: "Daisy Doe",
     username: "daisydoe",
-    profileImage: "src/assets/avatars/user-4.png",
+    profileImage: "/avatars/user-4.png",
   },
 ];

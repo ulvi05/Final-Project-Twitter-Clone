@@ -1,7 +1,7 @@
 import XSvg from "@/components/svgs/X";
 
 import { MdHomeFilled } from "react-icons/md";
-import { IoNotifications } from "react-icons/io5";
+import { IoNotifications, IoSearch } from "react-icons/io5";
 import { FaUser } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { BiLogOut } from "react-icons/bi";
@@ -12,63 +12,72 @@ const Sidebar = () => {
   const data = {
     fullName: "Ulvi Aghazade",
     username: "ulvi05",
-    profileImage: "src/assets/avatars/samurai.png",
+    profileImage: "/avatars/samurai.png",
   };
 
   return (
-    <div className="md:flex-[2_2_0] w-18 max-w-52">
+    <div className="md:flex-[2_2_0] w-18 max-w-5xl">
       <div className="sticky top-0 left-0 flex flex-col w-20 h-screen pl-2 pr-2 border-r border-gray-700 md:w-full">
         <Link to="/" className="flex justify-center md:justify-start">
           <XSvg className="w-12 h-12 px-2 rounded-full fill-white hover:bg-stone-900" />
         </Link>
         <ul className="flex flex-col gap-3 mt-4">
-          <li className="flex justify-center md:justify-start">
+          <li className="flex items-center justify-center cursor-pointer group md:justify-start">
             <Link
               to="/"
-              className="flex items-center gap-3 py-2 pl-2 pr-4 transition-all duration-300 rounded-full cursor-pointer hover:bg-stone-900 max-w-fit"
+              className="flex items-center gap-3 py-2 pl-2 pr-4 transition-all duration-300 rounded-full cursor-pointer max-w-fit group-hover:bg-stone-900"
             >
               <MdHomeFilled className="w-8 h-8" />
-              <span className="hidden text-lg md:block">Home</span>
+              <span className="hidden text-xl md:block">Home</span>
             </Link>
           </li>
-          <li className="flex justify-center md:justify-start">
+          <li className="flex items-center justify-center cursor-pointer group md:justify-start">
+            <Link
+              to="/explore"
+              className="flex items-center gap-3 py-2 pl-2 pr-4 transition-all duration-300 rounded-full cursor-pointer max-w-fit group-hover:bg-stone-900"
+            >
+              <IoSearch className="w-6 h-6" />
+              <span className="hidden text-xl md:block">Explore</span>
+            </Link>
+          </li>
+          <li className="flex items-center justify-center cursor-pointer group md:justify-start">
             <Link
               to="/notifications"
-              className="flex items-center gap-3 py-2 pl-2 pr-4 transition-all duration-300 rounded-full cursor-pointer hover:bg-stone-900 max-w-fit"
+              className="flex items-center gap-3 py-2 pl-2 pr-4 transition-all duration-300 rounded-full cursor-pointer max-w-fit group-hover:bg-stone-900"
             >
               <IoNotifications className="w-6 h-6" />
-              <span className="hidden text-lg md:block">Notifications</span>
+              <span className="hidden text-xl md:block">Notifications</span>
             </Link>
           </li>
-          <li className="flex justify-center md:justify-start">
+          <li className="flex items-center justify-center cursor-pointer group md:justify-start">
             <Link
-              to="/notifications"
-              className="flex items-center gap-3 py-2 pl-2 pr-4 transition-all duration-300 rounded-full cursor-pointer hover:bg-stone-900 max-w-fit"
+              to="/messages"
+              className="flex items-center gap-3 py-2 pl-2 pr-4 transition-all duration-300 rounded-full cursor-pointer max-w-fit group-hover:bg-stone-900"
             >
               <IoMdMail className="w-6 h-6" />
-              <span className="hidden text-lg md:block">Messages</span>
+              <span className="hidden text-xl md:block">Messages</span>
             </Link>
           </li>
-          <li className="flex justify-center md:justify-start">
+          <li className="flex items-center justify-center cursor-pointer group md:justify-start">
             <Link
               to="/grok"
-              className="flex items-center gap-3 py-2 pl-2 pr-4 transition-all duration-300 rounded-full cursor-pointer hover:bg-stone-900 max-w-fit"
+              className="flex items-center gap-3 py-2 pl-2 pr-4 transition-all duration-300 rounded-full cursor-pointer max-w-fit group-hover:bg-stone-900"
             >
               <PiOpenAiLogoBold className="w-6 h-6" />
-              <span className="hidden text-lg md:block">ChatGPT</span>
+              <span className="hidden text-xl md:block">ChatGPT</span>
             </Link>
           </li>
-
-          <li className="flex justify-center md:justify-start">
+          <li className="flex items-center justify-center cursor-pointer group md:justify-start">
             <Link
               to={`/profile/${data?.username}`}
-              className="flex items-center gap-3 py-2 pl-2 pr-4 transition-all duration-300 rounded-full cursor-pointer hover:bg-stone-900 max-w-fit"
+              className="flex items-center gap-3 py-2 pl-2 pr-4 transition-all duration-300 rounded-full cursor-pointer max-w-fit group-hover:bg-stone-900"
             >
               <FaUser className="w-6 h-6" />
-              <span className="hidden text-lg md:block">Profile</span>
+              <span className="hidden text-xl md:block">Profile</span>
             </Link>
           </li>
         </ul>
+
         {data && (
           <Link
             to={`/profile/${data.username}`}
@@ -76,7 +85,7 @@ const Sidebar = () => {
           >
             <div className="hidden avatar md:inline-flex">
               <div className="w-8 rounded-full">
-                <img src={data?.profileImage || "/avatar-placeholder.png"} />
+                <img src={data?.profileImage || "/avatars/samurai.png"} />
               </div>
             </div>
             <div className="flex items-center justify-between flex-1">
