@@ -6,7 +6,7 @@ const RightPanel = () => {
   const isLoading = false;
 
   return (
-    <div className="hidden mx-4 my-4 lg:block max-w-[350px]">
+    <div className="hidden mx-4 my-4 lg:block max-w-[350px] sticky top-4 h-screen overflow-y-auto">
       <div className="mb-4 flex flex-col gap-2.5 border-[#16181c] border p-4 rounded-xl shadow-md items-start">
         <p className="text-lg font-extrabold text-white">
           Subscribe to Premium
@@ -20,7 +20,7 @@ const RightPanel = () => {
         </button>
       </div>
 
-      <div className="border-[#16181C] border p-4 rounded-xl sticky top-2 shadow-md">
+      <div className="border-[#16181C] border p-4 rounded-xl shadow-md">
         <p className="mb-4 text-lg font-extrabold text-white">Who to follow</p>
         <div className="flex flex-col">
           {isLoading && (

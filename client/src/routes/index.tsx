@@ -27,18 +27,18 @@ const router = createBrowserRouter([
         element: <ProfilePage />,
       },
       {
-        path: paths.LOGIN,
-        element: <LoginPage />,
-      },
-      {
-        path: paths.SIGNUP,
-        element: <SignUpPage />,
-      },
-      {
         path: paths.NOTIFICATION,
         element: <NotificationPage />,
       },
     ],
+  },
+  {
+    path: paths.LOGIN,
+    element: <LoginPage />,
+  },
+  {
+    path: paths.SIGNUP,
+    element: <SignUpPage />,
   },
 ]);
 
