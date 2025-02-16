@@ -2,7 +2,7 @@ export type Post = {
   _id: string;
   text: string;
   img?: string;
-  likes: { userId: string }[];
+  likes: string[];
   comments: {
     _id: string;
     text: string;

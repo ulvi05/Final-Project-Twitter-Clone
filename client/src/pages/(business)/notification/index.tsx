@@ -1,40 +1,96 @@
-import { useState } from "react";
+import { Link } from "react-router-dom";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 
-import Posts from "@/components/common/Posts";
-// import CreatePost from "./CreatePost";
+import { IoSettingsOutline } from "react-icons/io5";
+import { FaUser } from "react-icons/fa";
+import { FaHeart } from "react-icons/fa6";
 
 const NotificationPage = () => {
-  const [feedType, setFeedType] = useState("forYou");
+  const isLoading = false;
+  const notifications = [
+    {
+      _id: "1",
+      from: {
+        _id: "1",
+        username: "johndoe",
+        profileImg: "/avatars/samurai.png",
+      },
+      type: "follow",
+    },
+    {
+      _id: "2",
+      from: {
+        _id: "2",
+        username: "janedoe",
+        profileImg: "/avatars/user-3.png",
+      },
+      type: "like",
+    },
+  ];
+
+  const deleteNotifications = () => {
+    alert("All notifications deleted");
+  };
 
   return (
     <>
-      <div className="flex-[4_4_0] mr-auto border-r border-gray-700 min-h-screen">
-        <div className="flex w-full border-b border-gray-700">
-          <div
-            className={
-              "flex justify-center flex-1 p-3 hover:bg-secondary transition duration-300 cursor-pointer relative"
-            }
-            onClick={() => setFeedType("forYou")}
-          >
-            For you
-            {feedType === "forYou" && (
-              <div className="absolute bottom-0 w-10 h-1 rounded-full bg-primary"></div>
-            )}
-          </div>
-          <div
-            className="relative flex justify-center flex-1 p-3 transition duration-300 cursor-pointer hover:bg-secondary"
-            onClick={() => setFeedType("following")}
-          >
-            Following
-            {feedType === "following" && (
-              <div className="absolute bottom-0 w-10 h-1 rounded-full bg-primary"></div>
-            )}
+      <div className="flex-[4_4_0] border-l border-r border-gray-700 min-h-screen">
+        <div className="flex items-center justify-between p-4 border-b border-gray-700">
+          <p className="font-bold">Notifications</p>
+          <div className="dropdown ">
+            <div tabIndex={0} role="button" className="m-1">
+              <IoSettingsOutline className="w-4" />
+            </div>
+            <ul
+              tabIndex={0}
+              className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
+            >
+              <li>
+                <a onClick={deleteNotifications}>Delete all notifications</a>
+              </li>
+            </ul>
           </div>
         </div>
-
-        {/* <CreatePost /> */}
-
-        <Posts />
+        {isLoading && (
+          <div className="flex items-center justify-center h-full">
+            <LoadingSpinner size="lg" />
+          </div>
+        )}
+        {notifications?.length === 0 && (
+          <div className="p-4 font-bold text-center">No notifications 🤔</div>
+        )}
+        {notifications?.map((notification) => (
+          <div className="border-b border-gray-700" key={notification._id}>
+            <div className="flex gap-2 p-4">
+              {notification.type === "follow" && (
+                <FaUser className="w-7 h-7 text-primary" />
+              )}
+              {notification.type === "like" && (
+                <FaHeart className="text-red-500 w-7 h-7" />
+              )}
+              <Link to={`/profile/${notification.from.username}`}>
+                <div className="avatar">
+                  <div className="w-8 rounded-full">
+                    <img
+                      src={
+                        notification.from.profileImg ||
+                        "/avatar-placeholder.png"
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="flex gap-1">
+                  <span className="font-bold">
+                    @{notification.from.username}
+                  </span>{" "}
+                  {notification.type === "follow"
+                    ? "followed you"
+                    : "liked your post"}
+                </div>
+              </Link>
+            </div>
+          </div>
+        ))}
       </div>
     </>
   );
