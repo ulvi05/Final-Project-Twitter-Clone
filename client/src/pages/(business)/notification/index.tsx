@@ -37,7 +37,7 @@ const NotificationPage = () => {
       <div className="flex-[4_4_0] border-l border-r border-gray-700 min-h-screen">
         <div className="flex items-center justify-between p-4 border-b border-gray-700">
           <p className="font-bold">Notifications</p>
-          <div className="dropdown ">
+          <div className="dropdown">
             <div tabIndex={0} role="button" className="m-1">
               <IoSettingsOutline className="w-4" />
             </div>

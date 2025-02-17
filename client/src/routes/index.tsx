@@ -23,7 +23,7 @@ const router = createBrowserRouter([
         element: <ExplorePage />,
       },
       {
-        path: paths.PROFILE,
+        path: paths.PROFILE(),
         element: <ProfilePage />,
       },
       {
