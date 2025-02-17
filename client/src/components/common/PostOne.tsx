@@ -6,6 +6,7 @@ import CommentModal from "@/components/common/CommentModal";
 import { FaRegComment, FaRegHeart, FaRegBookmark } from "react-icons/fa";
 import { BiRepost } from "react-icons/bi";
 import { IoIosMore } from "react-icons/io";
+
 import { useState } from "react";
 
 const PostOne = ({ post }: { post: Post }) => {
@@ -19,6 +20,11 @@ const PostOne = ({ post }: { post: Post }) => {
   const handleLikePost = () => {
     setIsLiked((prev) => !prev);
     setLikeCount((prev) => (isLiked ? prev - 1 : prev + 1));
+  };
+
+  const handleDeletePost = () => {
+    console.log("Post deleted!");
+    // Burada API çağrısı yapabilirsiniz
   };
 
   return (
@@ -45,13 +51,24 @@ const PostOne = ({ post }: { post: Post }) => {
               <span>{formattedDate}</span>
             </span>
             {isMyPost && (
-              <div className="flex justify-end flex-1 group">
-                <span className="p-2 transition duration-200 rounded-full cursor-pointer group-hover:bg-blue-900 group-hover:bg-opacity-50">
-                  <IoIosMore
-                    className="text-slate-500 group-hover:text-blue-400"
-                    onClick={() => {}}
-                  />
-                </span>
+              <div className="flex justify-end flex-1">
+                <div className="dropdown dropdown-end">
+                  <div
+                    tabIndex={0}
+                    role="button"
+                    className="p-2 transition duration-200 rounded-full cursor-pointer hover:bg-blue-900 hover:bg-opacity-50"
+                  >
+                    <IoIosMore className="text-slate-500 hover:text-blue-400" />
+                  </div>
+                  <ul
+                    tabIndex={0}
+                    className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-44"
+                  >
+                    <li>
+                      <button onClick={handleDeletePost}>Delete Post</button>
+                    </li>
+                  </ul>
+                </div>
               </div>
             )}
           </div>

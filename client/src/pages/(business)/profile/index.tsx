@@ -56,7 +56,7 @@ const CoverImage = ({
   onChange,
   isMyProfile,
 }: CoverImageProps) => (
-  <div className="relative group/cover">
+  <div className="relative group">
     <img
       src={coverImg || defaultImg}
       className="object-cover w-full h-52"
@@ -64,7 +64,7 @@ const CoverImage = ({
     />
     {isMyProfile && (
       <div
-        className="absolute p-2 bg-gray-800 bg-opacity-75 rounded-full opacity-0 cursor-pointer top-2 right-2 group-hover/cover:opacity-100"
+        className="absolute p-2 bg-gray-800 bg-opacity-75 rounded-full opacity-0 cursor-pointer top-2 right-2 group-hover:opacity-100"
         onClick={onEditClick}
       >
         <MdEdit className="w-5 h-5 text-white" />
@@ -82,22 +82,28 @@ const ProfileImage = ({
   onChange,
   isMyProfile,
 }: ProfileImageProps) => (
-  <div className="absolute avatar -bottom-16 left-4">
-    <div className="relative w-32 rounded-full group/avatar">
+  <div className="absolute bottom-[-5rem] left-4">
+    <div className="relative w-32 h-32 overflow-hidden rounded-full group">
       <img
         src={profileImg || defaultImg}
         alt="profile"
-        className="rounded-full"
+        className="object-cover w-full h-full"
+      />
+      <input
+        type="file"
+        accept="image/*"
+        hidden
+        ref={inputRef}
+        onChange={onChange}
       />
       {isMyProfile && (
         <div
-          className="absolute p-1 rounded-full opacity-0 cursor-pointer top-5 right-3 bg-primary group-hover/avatar:opacity-100"
+          className="absolute p-1.5 bg-gray-800 bg-opacity-75 rounded-full opacity-0 cursor-pointer top-2 right-3 group-hover:opacity-100"
           onClick={onEditClick}
         >
-          <MdEdit className="w-4 h-4 text-white" />
+          <MdEdit className="z-40 w-4 h-4 text-white" />
         </div>
       )}
-      <input type="file" hidden ref={inputRef} onChange={onChange} />
     </div>
   </div>
 );
@@ -125,7 +131,7 @@ const BioSection = ({ user }: { user: User }) => (
       )}
       <div className="flex items-center gap-2">
         <IoCalendarOutline className="w-4 h-4 text-slate-500" />
-        <span className="text-sm text-slate-500">Joined July 2021</span>
+        <span className="text-sm text-slate-500">Joined Febuary 2024</span>
       </div>
     </div>
     <div className="flex gap-2">
@@ -191,7 +197,7 @@ const ProfilePage = () => {
     profileImg: "/avatars/samurai.png",
     coverImg: "/cover.png",
     bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    link: "https://youtube.com/@asaprogrammer_",
+    link: "https://x.com/u1lviii",
     following: ["1", "2", "3"],
     followers: ["1", "2", "3"],
   };
@@ -221,22 +227,25 @@ const ProfilePage = () => {
       {!isLoading && user && (
         <>
           <Header fullName={user.fullName} postCount={POSTS.length} />
-          <CoverImage
-            coverImg={coverImg || user.coverImg}
-            defaultImg="/default-cover.png"
-            onEditClick={() => coverImgRef.current?.click()}
-            inputRef={coverImgRef}
-            onChange={(e) => handleImgChange(e, "coverImg")}
-            isMyProfile={isMyProfile}
-          />
-          <ProfileImage
-            profileImg={profileImg}
-            defaultImg="/default-avatar.png"
-            onEditClick={() => profileImgRef.current?.click()}
-            inputRef={profileImgRef}
-            onChange={(e) => handleImgChange(e, "profileImg")}
-            isMyProfile={true}
-          />
+
+          <div className="relative">
+            <CoverImage
+              coverImg={coverImg || user.coverImg}
+              defaultImg="/default-cover.png"
+              onEditClick={() => coverImgRef.current?.click()}
+              inputRef={coverImgRef}
+              onChange={(e) => handleImgChange(e, "coverImg")}
+              isMyProfile={isMyProfile}
+            />
+            <ProfileImage
+              profileImg={profileImg || user.profileImg}
+              defaultImg="/default-avatar.png"
+              onEditClick={() => profileImgRef.current?.click()}
+              inputRef={profileImgRef}
+              onChange={(e) => handleImgChange(e, "profileImg")}
+              isMyProfile={isMyProfile}
+            />
+          </div>
           <div className="flex justify-end px-4 mt-5">
             {isMyProfile ? (
               <EditProfileModal />

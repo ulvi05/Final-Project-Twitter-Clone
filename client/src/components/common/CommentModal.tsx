@@ -26,7 +26,7 @@ const CommentModal = ({ post }: { post: Post }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <dialog open className="border-none outline-none modal">
-        <div className="border border-gray-600 rounded modal-box">
+        <div className="border border-gray-600 modal-box rounded-xl">
           <h3 className="mb-4 text-lg font-bold">COMMENTS</h3>
           <div className="flex flex-col gap-3 overflow-auto max-h-60">
             {post.comments.length === 0 && (
@@ -59,19 +59,22 @@ const CommentModal = ({ post }: { post: Post }) => {
               type="text"
               value={comment}
               onChange={(e) => setComment(e.target.value)}
-              className="flex-1 p-2 border rounded"
+              className="flex-1 p-2 border rounded outline-none"
               placeholder="Write a comment..."
             />
             <button
               type="submit"
-              className="btn btn-primary"
+              className="rounded-lg btn btn-primary"
               disabled={isCommenting}
             >
               {isCommenting ? "Posting..." : "Post"}
             </button>
           </form>
 
-          <button onClick={closeDialog} className="mt-4 btn btn-secondary">
+          <button
+            onClick={closeDialog}
+            className="mt-4 rounded-lg btn btn-secondary"
+          >
             Close
           </button>
         </div>

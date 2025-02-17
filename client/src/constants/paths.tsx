@@ -3,6 +3,6 @@ export const paths = {
   SIGNUP: "/signup",
   LOGIN: "/login",
   EXPLORE: "/explore",
-  PROFILE: "/profile",
+  PROFILE: (username = ":username") => `/profile/${username}`,
   NOTIFICATION: "/notifications",
 };
