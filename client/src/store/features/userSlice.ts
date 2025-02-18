@@ -62,7 +62,7 @@ export const getCurrentUserAsync = createAsyncThunk(
 );
 export const logoutAsync = createAsyncThunk("user/logout", async () => {
   const response = await authService.logout();
-  return response.data;
+  return response.data.message;
 });
 
 export default userSlice.reducer;
