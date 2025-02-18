@@ -18,19 +18,13 @@ const Sidebar = () => {
   const handleLogout = () => {
     dispatch(logoutAsync())
       .then((response) => {
-        const message = response?.payload?.data ?? "Logged out successfully!";
+        const message = response?.payload ?? "Logged out successfully!";
         toast.success(message);
       })
       .catch((error) => {
         toast.error("Something went wrong! Please try again");
         console.log(error);
       });
-  };
-
-  const data = {
-    fullName: "Ulvi Aghazade",
-    username: "ulvi05",
-    profileImage: "/avatars/samurai.png",
   };
 
   return (
@@ -87,7 +81,7 @@ const Sidebar = () => {
           </li>
           <li className="flex items-center justify-center cursor-pointer group md:justify-start">
             <Link
-              to={`/profile/${data?.username}`}
+              to={`/profile/${user?.username}`}
               className="flex items-center gap-3 py-2 pl-2 pr-4 transition-all duration-300 rounded-full cursor-pointer max-w-fit group-hover:bg-stone-900"
             >
               <FaUser className="w-6 h-6" />
@@ -96,22 +90,22 @@ const Sidebar = () => {
           </li>
         </ul>
 
-        {data && (
+        {user && (
           <Link
-            to={`/profile/${data.username}`}
+            to={`/profile/${user.username}`}
             className="mt-auto mb-10 flex gap-2 items-start transition-all duration-300 hover:bg-[#181818] py-2 px-4 rounded-full"
           >
             <div className="hidden avatar md:inline-flex">
               <div className="w-8 rounded-full">
-                <img src={data?.profileImage || "/avatars/samurai.png"} />
+                <img src={user?.profileImage || "/avatars/samurai.png"} />
               </div>
             </div>
             <div className="flex items-center justify-between flex-1">
               <div className="hidden md:block">
                 <p className="w-20 text-sm font-bold text-white truncate">
-                  {data?.fullName}
+                  {user?.fullName}
                 </p>
-                <p className="text-sm text-slate-500">@{data?.username}</p>
+                <p className="text-sm text-slate-500">@{user?.username}</p>
               </div>
               <BiLogOut
                 className="w-5 h-5 cursor-pointer"

@@ -59,7 +59,7 @@ const Login = () => {
 
   const onSubmit = (data: LoginFormData) => {
     console.log("Form data:", data);
-    mutate(data); // sadece mutate çağrılıyor, yönlendirme onSuccess içinde yapılacak
+    mutate(data);
   };
 
   return (
