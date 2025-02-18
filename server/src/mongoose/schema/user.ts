@@ -7,6 +7,11 @@ const userSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    fullName: {
+      type: String,
+      required: true,
+      trim: true,
+    },
     googleId: {
       type: String,
       unique: true,
@@ -27,12 +32,6 @@ const userSchema = new mongoose.Schema(
       enum: ["admin", "user"],
       default: "user",
     },
-    name: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-
     followers: [
       {
         type: mongoose.Schema.Types.ObjectId,

@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { User } from "@/types/index";
-// import authService from "@/services/auth";
+import authService from "@/services/auth";
 
 export interface UserState {
   user: User | null;
@@ -11,7 +11,7 @@ export interface UserState {
 
 const initialState: UserState = {
   user: null,
-  loading: true,
+  loading: false,
   error: null,
 };
 

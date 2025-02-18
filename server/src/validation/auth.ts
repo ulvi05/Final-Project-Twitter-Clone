@@ -1,13 +1,13 @@
 import { Schema } from "express-validator";
 
 export const registerSchema: Schema = {
-  name: {
+  fullName: {
     in: ["body"],
     isString: {
-      errorMessage: "Name must be a string",
+      errorMessage: "fullName must be a string",
     },
     notEmpty: {
-      errorMessage: "Name is required",
+      errorMessage: "fullName is required",
     },
   },
   password: {

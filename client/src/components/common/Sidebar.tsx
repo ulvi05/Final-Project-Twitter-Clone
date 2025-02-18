@@ -7,8 +7,26 @@ import { Link } from "react-router-dom";
 import { BiLogOut } from "react-icons/bi";
 import { IoMdMail } from "react-icons/io";
 import { PiOpenAiLogoBold } from "react-icons/pi";
+import { useAppDispatch, useAppSelector } from "@/hooks";
+import { logoutAsync, selectUserData } from "@/store/features/userSlice";
+import { toast } from "sonner";
 
 const Sidebar = () => {
+  const { user } = useAppSelector(selectUserData);
+  const dispatch = useAppDispatch();
+
+  const handleLogout = () => {
+    dispatch(logoutAsync())
+      .then((response) => {
+        const message = response?.payload?.data ?? "Logged out successfully!";
+        toast.success(message);
+      })
+      .catch((error) => {
+        toast.error("Something went wrong! Please try again");
+        console.log(error);
+      });
+  };
+
   const data = {
     fullName: "Ulvi Aghazade",
     username: "ulvi05",
@@ -95,7 +113,13 @@ const Sidebar = () => {
                 </p>
                 <p className="text-sm text-slate-500">@{data?.username}</p>
               </div>
-              <BiLogOut className="w-5 h-5 cursor-pointer" />
+              <BiLogOut
+                className="w-5 h-5 cursor-pointer"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleLogout();
+                }}
+              />
             </div>
           </Link>
         )}
