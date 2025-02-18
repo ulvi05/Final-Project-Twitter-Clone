@@ -47,7 +47,7 @@ passport.use(
           username: profile.displayName,
           email: profile.emails?.[0].value,
           password: hashedPassword,
-          name: profile.displayName,
+          fullName: profile.displayName,
           profileImage: profile.photos?.[0].value,
           googleId: profile?.id,
         });

@@ -99,7 +99,7 @@ const getSuggestedUsers = async (req: Request, res: Response) => {
 };
 
 const updateUser = async (req: Request, res: Response) => {
-  const { name, email, username, currentPassword, newPassword, bio, link } =
+  const { fullName, email, username, currentPassword, newPassword, bio, link } =
     req.body;
   let { profileImage, coverImage } = req.body;
   const userId = req.user?._id;
@@ -169,7 +169,7 @@ const updateUser = async (req: Request, res: Response) => {
       coverImage = uploadedResponse.secure_url;
     }
 
-    user.name = name || user.name;
+    user.fullName = fullName || user.fullName;
     user.email = email || user.email;
     user.username = username || user.username;
     user.bio = bio || user.bio;

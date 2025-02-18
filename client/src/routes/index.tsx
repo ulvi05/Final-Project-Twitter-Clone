@@ -8,27 +8,34 @@ import ProfilePage from "@/pages/(business)/profile";
 import LoginPage from "@/pages/(business)/auth/login/login";
 import SignUpPage from "@/pages/(business)/auth/signup/signup";
 import NotificationPage from "@/pages/(business)/notification";
+import AuthGuard from "@/components/AuthLayout";
 
 const router = createBrowserRouter([
   {
     path: "",
-    element: <RootLayout />,
+    element: <AuthGuard />,
     children: [
       {
-        path: paths.HOME,
-        element: <HomePage />,
-      },
-      {
-        path: paths.EXPLORE,
-        element: <ExplorePage />,
-      },
-      {
-        path: paths.PROFILE(),
-        element: <ProfilePage />,
-      },
-      {
-        path: paths.NOTIFICATION,
-        element: <NotificationPage />,
+        path: "",
+        element: <RootLayout />,
+        children: [
+          {
+            path: paths.HOME,
+            element: <HomePage />,
+          },
+          {
+            path: paths.EXPLORE,
+            element: <ExplorePage />,
+          },
+          {
+            path: paths.PROFILE(),
+            element: <ProfilePage />,
+          },
+          {
+            path: paths.NOTIFICATION,
+            element: <NotificationPage />,
+          },
+        ],
       },
     ],
   },

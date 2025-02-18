@@ -1,12 +1,17 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
 
 import { MdOutlineMail, MdPassword } from "react-icons/md";
 import { MdDriveFileRenameOutline } from "react-icons/md";
 import XSvg from "@/components/svgs/X";
 import { FaUser } from "react-icons/fa";
+import { useMutation } from "@tanstack/react-query";
+import authService from "@/services/auth";
+import { AxiosError } from "axios";
+import { AuthResponseType } from "@/services/auth/types";
+import { toast } from "sonner";
 
 const signUpSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -14,7 +19,10 @@ const signUpSchema = z.object({
     .string()
     .min(3, "Username must be at least 3 characters")
     .max(15, "Username must be at most 15 characters")
-    .regex(/^[a-z]+$/, "Username must only contain lowercase letters"),
+    .regex(
+      /^[a-z0-9]+$/,
+      "Username must only contain lowercase letters and numbers"
+    ),
   fullName: z
     .string()
     .min(3, "Full name must be at least 3 characters")
@@ -28,16 +36,35 @@ const signUpSchema = z.object({
 type SignUpFormValues = z.infer<typeof signUpSchema>;
 
 const SignUp = () => {
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<SignUpFormValues>({
     resolver: zodResolver(signUpSchema),
   });
 
-  const onSubmit = (data: SignUpFormValues) => {
-    console.log("Form Data:", data);
+  const { mutate, isPending } = useMutation({
+    mutationFn: authService.register,
+    onSuccess: (response) => {
+      toast.success(response.data.message);
+      navigate("/login");
+      reset();
+    },
+    onError: (error: AxiosError<AuthResponseType>) => {
+      console.log(error.response?.data.message);
+      const message =
+        error.response?.data.message ??
+        "Something went wrong! Please try again";
+      toast.error(message);
+    },
+  });
+
+  const onSubmit = (values: SignUpFormValues) => {
+    mutate(values);
   };
 
   return (
@@ -129,7 +156,10 @@ const SignUp = () => {
               )}
             </div>
 
-            <button className="text-white rounded-full btn btn-primary">
+            <button
+              className="text-white rounded-full btn btn-primary"
+              disabled={isPending}
+            >
               Sign up
             </button>
           </div>

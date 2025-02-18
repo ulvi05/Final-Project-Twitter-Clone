@@ -42,8 +42,11 @@ const signup = async (req: Request, res: Response) => {
 };
 
 const login = async (req: Request, res: Response) => {
+  const user = { ...req.user };
+  delete user.resetPasswordToken;
+  delete user.resetPasswordTokenExpires;
   res.json({
-    message: `Welcome back, ${req.user?.name}`,
+    message: `Welcome back, ${req.user?.username}`,
     user: req.user,
   });
 };
@@ -64,7 +67,7 @@ const googleAuth = async (req: Request, res: Response) => {
         return;
       }
       res.json({
-        message: `Welcome, ${googleUser.name}`,
+        message: `Welcome, ${googleUser.username}`,
         googleUser,
       });
     });
@@ -75,8 +78,17 @@ const googleAuth = async (req: Request, res: Response) => {
 };
 
 const logout = async (req: Request, res: Response) => {
-  res.json({
-    data: "Logout Successfully",
+  req.logout((err) => {
+    if (err) {
+      res.status(500).json({
+        message: "Something went wrong",
+      });
+      return;
+    }
+
+    res.json({
+      message: "Logout successful",
+    });
   });
 };
 

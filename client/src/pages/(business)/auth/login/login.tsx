@@ -1,17 +1,24 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
 
 import { MdOutlineMail, MdPassword } from "react-icons/md";
 import XSvg from "@/components/svgs/X";
+import { useMutation } from "@tanstack/react-query";
+import authService from "@/services/auth";
+import { toast } from "sonner";
+import { AxiosError } from "axios";
+import { AuthResponseType } from "@/services/auth/types";
+import { useAppDispatch } from "@/hooks";
+import { getCurrentUserAsync } from "@/store/features/userSlice";
 
 const loginSchema = z.object({
-  username: z
+  email: z
     .string()
-    .min(3, "Username must be at least 3 characters")
-    .max(15, "Username must be at most 15 characters")
-    .regex(/^[a-z]+$/, "Username must only contain lowercase letters"),
+    .email("Invalid email address")
+    .min(3, "Email must be at least 3 characters")
+    .max(50, "Email must be at most 50 characters"),
   password: z
     .string()
     .min(6, "Password must be at least 6 characters")
@@ -21,16 +28,38 @@ const loginSchema = z.object({
 type LoginFormData = z.infer<typeof loginSchema>;
 
 const Login = () => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
   });
 
+  const { mutate, isPending } = useMutation({
+    mutationFn: authService.login,
+    onSuccess: (response) => {
+      console.log("Login successful, navigating to home...");
+      toast.success(response.data.message);
+      dispatch(getCurrentUserAsync());
+      reset();
+      navigate("/");
+    },
+    onError: (error: AxiosError<AuthResponseType>) => {
+      const message =
+        error.response?.data.message ??
+        "Something went wrong! Please try again";
+      toast.error(message);
+    },
+  });
+
   const onSubmit = (data: LoginFormData) => {
-    console.log(data);
+    console.log("Form data:", data);
+    mutate(data); // sadece mutate çağrılıyor, yönlendirme onSuccess içinde yapılacak
   };
 
   return (
@@ -47,15 +76,15 @@ const Login = () => {
             <div className="flex items-center gap-2 rounded input input-bordered">
               <MdOutlineMail />
               <input
-                type="text"
+                type="email"
                 className="grow"
-                placeholder="Username"
-                {...register("username")}
+                placeholder="Email"
+                {...register("email")}
               />
             </div>
-            {errors.username && (
+            {errors.email && (
               <span className="mt-1 text-xs text-red-500">
-                {errors.username.message}
+                {errors.email.message}
               </span>
             )}
           </div>
@@ -80,6 +109,7 @@ const Login = () => {
           <button
             type="submit"
             className="text-white rounded-full btn btn-primary"
+            disabled={isPending}
           >
             Log in
           </button>
