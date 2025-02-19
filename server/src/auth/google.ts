@@ -30,26 +30,35 @@ passport.use(
     },
     async (_accessToken, _refreshToken, profile, done) => {
       try {
-        const existingUser = await User.findOne({
-          email: profile.emails?.[0].value,
-        });
+        const email = profile.emails?.[0]?.value;
+        const googleId = profile.id;
 
-        console.log(profile);
-
-        if (existingUser) {
-          return done(null, existingUser as IUser);
+        if (!googleId) {
+          return done(new Error("Google ID is missing"), false);
+        }
+        if (!email) {
+          return done(new Error("Google email is missing"), false);
         }
 
+        let user = await User.findOne({ email });
+
+        if (user) {
+          if (!user.googleId) {
+            user.googleId = googleId;
+            await user.save();
+          }
+          return done(null, user);
+        }
         const randomPassword = Math.random().toString(36).slice(-8);
         const hashedPassword = hashPassword(randomPassword);
 
         const newUser = new User({
           username: profile.displayName,
-          email: profile.emails?.[0].value,
-          password: hashedPassword,
           fullName: profile.displayName,
+          email,
+          googleId,
+          password: hashedPassword,
           profileImage: profile.photos?.[0].value,
-          googleId: profile?.id,
         });
 
         await newUser.save();

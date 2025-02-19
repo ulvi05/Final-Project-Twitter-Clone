@@ -10,8 +10,6 @@ import authService from "@/services/auth";
 import { toast } from "sonner";
 import { AxiosError } from "axios";
 import { AuthResponseType } from "@/services/auth/types";
-import { useAppDispatch } from "@/hooks";
-import { getCurrentUserAsync } from "@/store/features/userSlice";
 
 const loginSchema = z.object({
   email: z
@@ -28,7 +26,6 @@ const loginSchema = z.object({
 type LoginFormData = z.infer<typeof loginSchema>;
 
 const Login = () => {
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const {
@@ -45,7 +42,6 @@ const Login = () => {
     onSuccess: (response) => {
       console.log("Login successful, navigating to home...");
       toast.success(response.data.message);
-      dispatch(getCurrentUserAsync());
       reset();
       navigate("/");
     },
