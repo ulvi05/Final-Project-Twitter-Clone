@@ -3,7 +3,7 @@ import XSvg from "@/components/svgs/X";
 import { MdHomeFilled } from "react-icons/md";
 import { IoNotifications, IoSearch } from "react-icons/io5";
 import { FaUser } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { BiLogOut } from "react-icons/bi";
 import { IoMdMail } from "react-icons/io";
 import { PiOpenAiLogoBold } from "react-icons/pi";
@@ -14,12 +14,14 @@ import { toast } from "sonner";
 const Sidebar = () => {
   const { user } = useAppSelector(selectUserData);
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     dispatch(logoutAsync())
       .then((response) => {
         const message = response?.payload ?? "Logged out successfully!";
         toast.success(message);
+        navigate("/login");
       })
       .catch((error) => {
         toast.error("Something went wrong! Please try again");
@@ -97,7 +99,7 @@ const Sidebar = () => {
           >
             <div className="hidden avatar md:inline-flex">
               <div className="w-8 rounded-full">
-                <img src={user?.profileImage || "/avatars/samurai.png"} />
+                <img src={user?.profileImage || "/avatar-placeholder.png"} />
               </div>
             </div>
             <div className="flex items-center justify-between flex-1">
