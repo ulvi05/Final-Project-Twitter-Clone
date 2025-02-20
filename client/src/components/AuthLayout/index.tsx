@@ -1,20 +1,22 @@
-import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import {
   getCurrentUserAsync,
   selectUserData,
 } from "@/store/features/userSlice";
-import { AppDispatch } from "@/store";
-import { Outlet } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import LoadingSpinner from "../common/LoadingSpinner";
+import { paths } from "@/constants/paths";
+import { useAppDispatch, useAppSelector } from "@/hooks";
 
 const AuthGuard = () => {
-  const { loading } = useSelector(selectUserData);
-  const dispatch: AppDispatch = useDispatch();
+  const { user, loading } = useAppSelector(selectUserData);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch(getCurrentUserAsync());
-  }, []);
+    if (!user) {
+      dispatch(getCurrentUserAsync());
+    }
+  }, [user, dispatch]);
 
   if (loading) {
     return (
@@ -22,6 +24,10 @@ const AuthGuard = () => {
         <LoadingSpinner size="lg" />
       </div>
     );
+  }
+
+  if (!user) {
+    return <Navigate to={paths.LOGIN} />;
   }
 
   return <Outlet />;
