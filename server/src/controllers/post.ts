@@ -9,7 +9,8 @@ import Notification from "../mongoose/schema/notification";
 const createPost = async (req: Request, res: Response) => {
   try {
     const { text } = req.body;
-    let { img, video } = req.body;
+    let img = req.file?.path;
+    let video = req.file?.path;
 
     const userId = req.user?._id.toString();
 
@@ -28,6 +29,7 @@ const createPost = async (req: Request, res: Response) => {
 
     if (img) {
       const uploadedResponse = await cloudinary.uploader.upload(img);
+      console.log("Cloudinary Image Upload Response: ", uploadedResponse);
       mediaUrl = uploadedResponse.secure_url;
     }
 
@@ -35,6 +37,7 @@ const createPost = async (req: Request, res: Response) => {
       const uploadedResponse = await cloudinary.uploader.upload(video, {
         resource_type: "video",
       });
+      console.log("Cloudinary Video Upload Response: ", uploadedResponse);
       mediaUrl = uploadedResponse.secure_url;
     }
 
@@ -45,6 +48,7 @@ const createPost = async (req: Request, res: Response) => {
       video: video ? mediaUrl : undefined,
     });
 
+    console.log("New Post Data: ", newPost);
     await newPost.save();
 
     res.status(201).json(newPost);

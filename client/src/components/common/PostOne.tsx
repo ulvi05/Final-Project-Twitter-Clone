@@ -1,21 +1,41 @@
+import { useState } from "react";
+import { selectUserData } from "@/store/features/userSlice";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { Post } from "@/types/Post";
+import { PostType } from "@/types/Post";
+import { useAppSelector } from "@/hooks";
+import postService from "@/services/posts";
+
 import { useDialog, ModalTypeEnum } from "@/hooks/useDialog";
 import CommentModal from "@/components/common/CommentModal";
 
 import { FaRegComment, FaRegHeart, FaRegBookmark } from "react-icons/fa";
 import { BiRepost } from "react-icons/bi";
 import { IoIosMore } from "react-icons/io";
+import { toast } from "sonner";
+import LoadingSpinner from "./LoadingSpinner";
+import { QUERY_KEYS } from "@/constants/query-keys";
 
-import { useState } from "react";
-
-const PostOne = ({ post }: { post: Post }) => {
+const PostOne = ({ post }: { post: PostType }) => {
   const { openDialog } = useDialog();
+  const { user } = useAppSelector(selectUserData);
+  const queryClient = useQueryClient();
+
   const postOwner = post.user;
   const [isLiked, setIsLiked] = useState(post.likes.includes("currentUserId"));
   const [likeCount, setLikeCount] = useState(post.likes.length);
-  const isMyPost = true;
+  const isMyPost = user?._id === post.user._id;
   const formattedDate = "1h";
+
+  const { mutate: deletePost, isPending } = useMutation({
+    mutationFn: postService.deletePost,
+    onSuccess: () => {
+      toast.success("Post deleted successfully");
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.POSTS],
+      });
+    },
+  });
 
   const handleLikePost = () => {
     setIsLiked((prev) => !prev);
@@ -23,8 +43,7 @@ const PostOne = ({ post }: { post: Post }) => {
   };
 
   const handleDeletePost = () => {
-    console.log("Post deleted!");
-    // Burada API çağrısı yapabilirsiniz
+    deletePost({ id: post._id });
   };
 
   return (
@@ -35,7 +54,7 @@ const PostOne = ({ post }: { post: Post }) => {
             to={`/profile/${postOwner.username}`}
             className="w-8 overflow-hidden rounded-full"
           >
-            <img src={postOwner.profileImg || "/avatar-placeholder.png"} />
+            <img src={postOwner.profileImage || "/avatar-placeholder.png"} />
           </Link>
         </div>
         <div className="flex flex-col flex-1">
@@ -58,14 +77,20 @@ const PostOne = ({ post }: { post: Post }) => {
                     role="button"
                     className="p-2 transition duration-200 rounded-full cursor-pointer hover:bg-blue-900 hover:bg-opacity-50"
                   >
-                    <IoIosMore className="text-slate-500 hover:text-blue-400" />
+                    {isPending ? (
+                      <LoadingSpinner size="sm" />
+                    ) : (
+                      <IoIosMore className="text-slate-500 hover:text-blue-400" />
+                    )}
                   </div>
                   <ul
                     tabIndex={0}
                     className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-44"
                   >
                     <li>
-                      <button onClick={handleDeletePost}>Delete Post</button>
+                      <button onClick={handleDeletePost} disabled={isPending}>
+                        {isPending ? "Deleting..." : "Delete Post"}
+                      </button>
                     </li>
                   </ul>
                 </div>

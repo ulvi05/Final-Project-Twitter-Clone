@@ -2,8 +2,17 @@ import { CiImageOn } from "react-icons/ci";
 import { useRef, useState } from "react";
 import { IoCloseSharp } from "react-icons/io5";
 import { FaRegSmile } from "react-icons/fa";
+import { useAppSelector } from "@/hooks";
+import { selectUserData } from "@/store/features/userSlice";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import postService from "@/services/posts";
+import { QUERY_KEYS } from "@/constants/query-keys";
 
-interface CreatePostProps {}
+interface CreatePostProps {
+  text: string;
+  img: string;
+  video: string;
+}
 
 type FileInputEvent = React.ChangeEvent<HTMLInputElement>;
 
@@ -11,19 +20,36 @@ const CreatePost: React.FC<CreatePostProps> = () => {
   const [text, setText] = useState<string>("");
   const [media, setMedia] = useState<string | null>(null);
   const [mediaType, setMediaType] = useState<"image" | "video" | null>(null);
-
   const imgRef = useRef<HTMLInputElement | null>(null);
 
-  const isPending = false;
-  const isError = false;
+  const { user } = useAppSelector(selectUserData);
+  const queryClient = useQueryClient();
 
-  const data = {
-    profileImg: "/avatars/samurai.png",
-  };
+  const {
+    mutate: createPost,
+    isPending,
+    isError,
+  } = useMutation({
+    mutationFn: (data: { text: string; media?: File | null }) =>
+      postService.create(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.POSTS],
+      });
+      setText("");
+      setMedia(null);
+      setMediaType(null);
+    },
+  });
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    alert("Post created successfully");
+    const file = imgRef.current?.files?.[0] || null;
+
+    createPost({
+      text,
+      media: file,
+    });
   };
 
   const handleMediaChange = (e: FileInputEvent) => {
@@ -44,7 +70,7 @@ const CreatePost: React.FC<CreatePostProps> = () => {
     <div className="flex items-start gap-4 p-4 border-b border-gray-700">
       <div className="avatar">
         <div className="w-8 rounded-full">
-          <img src={data.profileImg || "/avatar-placeholder.png"} />
+          <img src={user?.profileImage || "/avatar-placeholder.png"} />
         </div>
       </div>
       <form className="flex flex-col w-full gap-2" onSubmit={handleSubmit}>
