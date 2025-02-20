@@ -10,6 +10,12 @@ import authService from "@/services/auth";
 import { toast } from "sonner";
 import { AxiosError } from "axios";
 import { AuthResponseType } from "@/services/auth/types";
+import { useAppDispatch, useAppSelector } from "@/hooks";
+import {
+  getCurrentUserAsync,
+  selectUserData,
+} from "@/store/features/userSlice";
+import { useEffect } from "react";
 
 const loginSchema = z.object({
   email: z
@@ -27,6 +33,14 @@ type LoginFormData = z.infer<typeof loginSchema>;
 
 const Login = () => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const { user } = useAppSelector(selectUserData);
+
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
 
   const {
     register,
@@ -42,8 +56,8 @@ const Login = () => {
     onSuccess: (response) => {
       console.log("Login successful, navigating to home...");
       toast.success(response.data.message);
+      dispatch(getCurrentUserAsync());
       reset();
-      navigate("/");
     },
     onError: (error: AxiosError<AuthResponseType>) => {
       const message =
