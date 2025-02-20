@@ -1,28 +1,23 @@
-import { Request } from "express";
 import multer from "multer";
-import path from "path";
-import { v4 as uuidv4 } from "uuid";
+import { v2 as cloudinary } from "cloudinary";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
 
-type DestinationCallback = (error: Error | null, destination: string) => void;
-type FileNameCallback = (error: Error | null, filename: string) => void;
-
-const storage = multer.diskStorage({
-  destination: function (
-    req: Request,
-    file: Express.Multer.File,
-    cb: DestinationCallback
-  ) {
-    cb(null, "public/images");
-  },
-  filename: function (
-    req: Request,
-    file: Express.Multer.File,
-    cb: FileNameCallback
-  ) {
-    cb(null, uuidv4() + path.extname(file.originalname));
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: async (_req, file) => {
+    const fileType = file.mimetype.startsWith("image") ? "images" : "videos";
+    const uniqueFilename = `${Date.now()}-${file.originalname}`;
+    return {
+      folder: fileType,
+      public_id: uniqueFilename,
+      resource_type: file.mimetype.startsWith("image") ? "image" : "video",
+    };
   },
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({ storage }).fields([
+  { name: "img", maxCount: 1 },
+  { name: "video", maxCount: 1 },
+]);
 
 export default upload;

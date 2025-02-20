@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import { User } from "@/types/index";
+import { User } from "@/types/User";
 import authService from "@/services/auth";
 
 export interface UserState {

@@ -2,29 +2,23 @@ import Post from "./PostOne";
 import PostSkeleton from "../skeletons/PostSkeleton";
 import { useQuery } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/constants/query-keys";
-import axiosInstance from "@/services/axiosInstance";
 import { PostType } from "@/types/Post";
 import { useEffect } from "react";
+import postService from "@/services/posts";
 
 interface PostsProps {
   feedType: "forYou" | "following";
 }
 
 const Posts = ({ feedType }: PostsProps) => {
-  const POST_ENDPOINT =
-    feedType === "following" ? "/posts/following" : "/posts/all";
-
   const {
     data: posts,
     isLoading,
     refetch,
     isRefetching,
   } = useQuery({
-    queryKey: [QUERY_KEYS.POSTS],
-    queryFn: async () => {
-      const { data } = await axiosInstance.get(POST_ENDPOINT);
-      return data;
-    },
+    queryKey: [QUERY_KEYS.POSTS, feedType],
+    queryFn: () => postService.getPosts(feedType),
   });
 
   useEffect(() => {

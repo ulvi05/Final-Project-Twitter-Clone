@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { User } from "@/types/index";
+import { User } from "@/types/User";
 
 import Posts from "@/components/common/Posts";
 import ProfileHeaderSkeleton from "@/components/skeletons/ProfileHeaderSkeleton";
