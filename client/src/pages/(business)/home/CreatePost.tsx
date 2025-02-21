@@ -46,7 +46,7 @@ const CreatePost: React.FC<CreatePostProps> = () => {
     e.preventDefault();
     const file = imgRef.current?.files?.[0] || null;
 
-    console.log("Gönderilen veri:", { text, media: file });
+    console.log("Data sent:", { text, media: file });
 
     createPost({
       text,
@@ -60,11 +60,29 @@ const CreatePost: React.FC<CreatePostProps> = () => {
       const fileType = file.type.startsWith("image") ? "image" : "video";
       setMediaType(fileType);
 
-      const reader = new FileReader();
-      reader.onload = () => {
-        setMedia(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+      if (fileType === "image") {
+        const reader = new FileReader();
+        reader.onload = () => {
+          setMedia(reader.result as string);
+        };
+        reader.readAsDataURL(file);
+      } else if (fileType === "video") {
+        const videoURL = URL.createObjectURL(file);
+        setMedia(videoURL);
+      }
+    }
+  };
+
+  const handleRemoveMedia = () => {
+    if (media && mediaType === "video") {
+      URL.revokeObjectURL(media);
+    }
+
+    setMedia(null);
+    setMediaType(null);
+
+    if (imgRef.current) {
+      imgRef.current.value = "";
     }
   };
 
@@ -86,13 +104,7 @@ const CreatePost: React.FC<CreatePostProps> = () => {
           <div className="relative mx-auto w-72">
             <IoCloseSharp
               className="absolute top-0 right-0 w-5 h-5 p-0.5 text-white bg-gray-800 rounded-full cursor-pointer"
-              onClick={() => {
-                setMedia(null);
-                setMediaType(null);
-                if (imgRef.current) {
-                  imgRef.current.value = "";
-                }
-              }}
+              onClick={handleRemoveMedia}
             />
             {mediaType === "image" ? (
               <img
