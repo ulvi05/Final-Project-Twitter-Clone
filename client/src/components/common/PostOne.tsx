@@ -106,7 +106,19 @@ const PostOne = ({ post }: { post: PostType }) => {
                 alt=""
               />
             )}
+            {post.video && (
+              <div className="flex justify-center mt-3">
+                <video
+                  className="object-contain border border-gray-700 rounded-lg h-80"
+                  controls
+                >
+                  <source src={post.video} type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+              </div>
+            )}
           </div>
+
           <div className="flex justify-between mt-3">
             <div className="flex items-center justify-between w-2/3 gap-4">
               <div

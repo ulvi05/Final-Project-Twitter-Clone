@@ -1,16 +1,20 @@
 export type User = {
   _id: string;
-  email: string;
-  fullName: string;
   username: string;
-  bio: string;
-  link?: string;
+  fullName: string;
+  googleId: string;
+  email: string;
+  role: UserRole;
+  followers: string[];
+  following: string[];
   profileImage: string;
   coverImage: string;
-  following: string[];
-  followers: string[];
+  bio: string;
+  link: string;
   likedPosts: string[];
-  role?: UserRole;
+  createdAt: string;
+  updatedAt: string;
+  __v: 0;
 };
 
 export enum UserRole {

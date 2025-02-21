@@ -1,9 +1,17 @@
 import { Link } from "react-router-dom";
 import RightPanelSkeleton from "../skeletons/RightPanelSkeleton";
-import { USERS_FOR_RIGHT_PANEL } from "@/utils/db/dummy-data";
+import { useQuery } from "@tanstack/react-query";
+import { QUERY_KEYS } from "@/constants/query-keys";
+import usersService from "@/services/users";
+import { User } from "@/types/User";
 
 const RightPanel = () => {
-  const isLoading = false;
+  const { data: suggestedUsers, isLoading } = useQuery({
+    queryKey: [QUERY_KEYS.SUGGESTED_USERS],
+    queryFn: usersService.getAll,
+  });
+  //@ts-ignore
+  if (suggestedUsers?.length === 0) return <div className="w-0 md:w-64"></div>;
 
   return (
     <div className="hidden mx-4 my-4 lg:block max-w-[350px] sticky top-4 h-screen overflow-y-auto">
@@ -32,7 +40,8 @@ const RightPanel = () => {
             </>
           )}
           {!isLoading &&
-            USERS_FOR_RIGHT_PANEL?.map((user) => (
+            //@ts-ignore
+            suggestedUsers?.map((user: User) => (
               <Link
                 to={`/profile/${user.username}`}
                 className="flex items-center justify-between gap-4 hover:bg-[#1D1F23] p-2 rounded-lg transition-colors"
@@ -42,7 +51,7 @@ const RightPanel = () => {
                   <div className="avatar">
                     <div className="w-10 h-10 overflow-hidden border border-gray-600 rounded-full">
                       <img
-                        src={user.profileImage || "/default-avatar.png"}
+                        src={user.profileImage || "/avatar-placeholder.png"}
                         alt={`${user.fullName}'s avatar`}
                         className="object-cover"
                       />
