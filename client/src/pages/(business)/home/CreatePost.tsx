@@ -46,6 +46,8 @@ const CreatePost: React.FC<CreatePostProps> = () => {
     e.preventDefault();
     const file = imgRef.current?.files?.[0] || null;
 
+    console.log("Gönderilen veri:", { text, media: file });
+
     createPost({
       text,
       media: file,

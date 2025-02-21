@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { v2 as cloudinary } from "cloudinary";
 import mongoose from "mongoose";
 
@@ -9,9 +9,6 @@ import Notification from "../mongoose/schema/notification";
 const createPost = async (req: Request, res: Response) => {
   try {
     const { text } = req.body;
-    let img = req.file?.path;
-    let video = req.file?.path;
-
     const userId = req.user?._id.toString();
 
     const user = await User.findById(userId);
@@ -20,32 +17,30 @@ const createPost = async (req: Request, res: Response) => {
       return;
     }
 
-    if (!text && !img && !video) {
-      res.status(400).json({ message: "Post must have text or image" });
+    let imgUrl: string | undefined;
+    let videoUrl: string | undefined;
+
+    if (!text && !req.files) {
+      res.status(400).json({ message: "Post must have text or media" });
       return;
     }
 
-    let mediaUrl = "";
-
-    if (img) {
-      const uploadedResponse = await cloudinary.uploader.upload(img);
-      console.log("Cloudinary Image Upload Response: ", uploadedResponse);
-      mediaUrl = uploadedResponse.secure_url;
+    if (req.files && "img" in req.files) {
+      const imgFile = (req.files as { img?: Express.Multer.File[] }).img?.[0];
+      imgUrl = imgFile?.path;
     }
 
-    if (video) {
-      const uploadedResponse = await cloudinary.uploader.upload(video, {
-        resource_type: "video",
-      });
-      console.log("Cloudinary Video Upload Response: ", uploadedResponse);
-      mediaUrl = uploadedResponse.secure_url;
+    if (req.files && "video" in req.files) {
+      const videoFile = (req.files as { video?: Express.Multer.File[] })
+        .video?.[0];
+      videoUrl = videoFile?.path;
     }
 
     const newPost = new Post({
       user: userId,
       text,
-      img: img ? mediaUrl : undefined,
-      video: video ? mediaUrl : undefined,
+      img: imgUrl,
+      video: videoUrl,
     });
 
     console.log("New Post Data: ", newPost);
