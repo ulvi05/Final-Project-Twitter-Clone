@@ -12,9 +12,13 @@ const getPosts = async (feedType: "forYou" | "following") => {
 const create = async (data: { text: string; media?: File | null }) => {
   const formData = new FormData();
   formData.append("text", data.text);
+
   if (data.media) {
-    const mediaField = data.media.type.startsWith("image") ? "img" : "video";
-    formData.append(mediaField, data.media);
+    if (data.media.type.startsWith("image")) {
+      formData.append("img", data.media);
+    } else if (data.media.type.startsWith("video")) {
+      formData.append("video", data.media);
+    }
   }
 
   const response = await axiosInstance.post("/posts/create", formData, {
