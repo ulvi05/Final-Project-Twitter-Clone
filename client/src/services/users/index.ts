@@ -8,8 +8,14 @@ const getAll = async () => {
   return response.data;
 };
 
+const followUser = async (userId: string) => {
+  const response = await axiosInstance.post(`/users/follow/${userId}`);
+  return response.data;
+};
+
 const usersService = {
   getAll,
+  followUser,
 };
 
 export default usersService;
