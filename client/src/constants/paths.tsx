@@ -5,4 +5,5 @@ export const paths = {
   EXPLORE: "/explore",
   PROFILE: (username = ":username") => `/profile/${username}`,
   NOTIFICATION: "/notifications",
+  SUBSCRIBE: "/subscribe",
 };

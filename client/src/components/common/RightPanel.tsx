@@ -8,6 +8,7 @@ import useFollow from "@/hooks/useFollow";
 
 import RightPanelSkeleton from "../skeletons/RightPanelSkeleton";
 import LoadingSpinner from "./LoadingSpinner";
+import { paths } from "@/constants/paths";
 
 const RightPanel = () => {
   const { data: suggestedUsers, isLoading } = useQuery({
@@ -30,9 +31,11 @@ const RightPanel = () => {
           Subscribe to unlock new features and if eligible, receive a share of
           revenue.
         </span>
-        <button className="px-4 py-2 text-sm font-medium text-white transition bg-blue-500 rounded-full hover:bg-blue-600">
-          Subscribe
-        </button>
+        <Link to={paths.SUBSCRIBE}>
+          <button className="px-4 py-2 text-sm font-medium text-white transition bg-blue-500 rounded-full hover:bg-blue-600">
+            Subscribe
+          </button>
+        </Link>
       </div>
 
       <div className="border-[#16181C] border p-4 rounded-xl shadow-md">
