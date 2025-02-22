@@ -1,9 +1,11 @@
-import { useDialog, ModalTypeEnum } from "@/hooks/useDialog";
-import { Post } from "@/types/Post";
-import { Comment } from "@/types/Comment";
 import { useState } from "react";
+import { PostType } from "@/types/Post";
+import { Comment } from "@/types/Comment";
 
-const CommentModal = ({ post }: { post: Post }) => {
+import { useDialog, ModalTypeEnum } from "@/hooks/useDialog";
+import LoadingSpinner from "./LoadingSpinner";
+
+const CommentModal = ({ post }: { post: PostType }) => {
   const { type, isOpen, closeDialog } = useDialog();
   const [comment, setComment] = useState("");
   const [isCommenting, setIsCommenting] = useState(false);
@@ -67,7 +69,7 @@ const CommentModal = ({ post }: { post: Post }) => {
               className="rounded-lg btn btn-primary"
               disabled={isCommenting}
             >
-              {isCommenting ? "Posting..." : "Post"}
+              {isCommenting ? <LoadingSpinner size="md" /> : "Post"}
             </button>
           </form>
 

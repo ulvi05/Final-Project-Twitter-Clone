@@ -6,7 +6,7 @@ import {
 import { Navigate, Outlet } from "react-router-dom";
 import LoadingSpinner from "../common/LoadingSpinner";
 import { paths } from "@/constants/paths";
-import { useAppDispatch, useAppSelector } from "@/hooks";
+import { useAppDispatch, useAppSelector } from "@/hooks/main";
 
 const AuthGuard = () => {
   const { user, loading } = useAppSelector(selectUserData);

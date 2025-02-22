@@ -2,7 +2,7 @@ import { CiImageOn } from "react-icons/ci";
 import { useRef, useState } from "react";
 import { IoCloseSharp } from "react-icons/io5";
 import { FaRegSmile } from "react-icons/fa";
-import { useAppSelector } from "@/hooks";
+import { useAppSelector } from "@/hooks/main";
 import { selectUserData } from "@/store/features/userSlice";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import postService from "@/services/posts";

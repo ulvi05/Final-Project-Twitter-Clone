@@ -7,7 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { BiLogOut } from "react-icons/bi";
 import { IoMdMail } from "react-icons/io";
 import { PiOpenAiLogoBold } from "react-icons/pi";
-import { useAppDispatch, useAppSelector } from "@/hooks";
+import { useAppDispatch, useAppSelector } from "@/hooks/main";
 import { logoutAsync, selectUserData } from "@/store/features/userSlice";
 import { toast } from "sonner";
 

@@ -10,7 +10,7 @@ import authService from "@/services/auth";
 import { toast } from "sonner";
 import { AxiosError } from "axios";
 import { AuthResponseType } from "@/services/auth/types";
-import { useAppDispatch, useAppSelector } from "@/hooks";
+import { useAppDispatch, useAppSelector } from "@/hooks/main";
 import {
   getCurrentUserAsync,
   selectUserData,

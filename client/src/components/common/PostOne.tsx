@@ -1,9 +1,8 @@
-import { useState } from "react";
 import { selectUserData } from "@/store/features/userSlice";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { PostType } from "@/types/Post";
-import { useAppSelector } from "@/hooks";
+import { useAppSelector } from "@/hooks/main";
 import postService from "@/services/posts";
 
 import { useDialog, ModalTypeEnum } from "@/hooks/useDialog";
@@ -22,12 +21,11 @@ const PostOne = ({ post }: { post: PostType }) => {
   const queryClient = useQueryClient();
 
   const postOwner = post.user;
-  const [isLiked, setIsLiked] = useState(post.likes.includes("currentUserId"));
-  const [likeCount, setLikeCount] = useState(post.likes.length);
+  const isLiked = post.likes.includes(user?._id ?? "");
   const isMyPost = user?._id === post.user._id;
   const formattedDate = "1h";
 
-  const { mutate: deletePost, isPending } = useMutation({
+  const { mutate: deletePost, isPending: isDeleting } = useMutation({
     mutationFn: postService.deletePost,
     onSuccess: () => {
       toast.success("Post deleted successfully");
@@ -37,9 +35,27 @@ const PostOne = ({ post }: { post: PostType }) => {
     },
   });
 
+  const { mutate: likePost, isPending: isLiking } = useMutation({
+    mutationFn: postService.likePost,
+    onSuccess: (updatedLikes) => {
+      queryClient.setQueryData([QUERY_KEYS.POSTS], (oldData: PostType[]) => {
+        if (!oldData) return [];
+        return oldData.map((p) => {
+          if (p._id === post._id) {
+            return {
+              ...p,
+              likes: updatedLikes,
+            };
+          }
+          return p;
+        });
+      });
+    },
+  });
+
   const handleLikePost = () => {
-    setIsLiked((prev) => !prev);
-    setLikeCount((prev) => (isLiked ? prev - 1 : prev + 1));
+    if (isLiking) return;
+    likePost({ postId: post._id });
   };
 
   const handleDeletePost = () => {
@@ -77,7 +93,7 @@ const PostOne = ({ post }: { post: PostType }) => {
                     role="button"
                     className="p-2 transition duration-200 rounded-full cursor-pointer hover:bg-blue-900 hover:bg-opacity-50"
                   >
-                    {isPending ? (
+                    {isDeleting ? (
                       <LoadingSpinner size="sm" />
                     ) : (
                       <IoIosMore className="text-slate-500 hover:text-blue-400" />
@@ -88,8 +104,8 @@ const PostOne = ({ post }: { post: PostType }) => {
                     className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-44"
                   >
                     <li>
-                      <button onClick={handleDeletePost} disabled={isPending}>
-                        {isPending ? "Deleting..." : "Delete Post"}
+                      <button onClick={handleDeletePost} disabled={isDeleting}>
+                        {isDeleting ? "Deleting..." : "Delete Post"}
                       </button>
                     </li>
                   </ul>
@@ -147,18 +163,22 @@ const PostOne = ({ post }: { post: PostType }) => {
                 onClick={handleLikePost}
               >
                 <div className="p-2 transition duration-200 rounded-full group-hover:bg-pink-900 group-hover:bg-opacity-50">
-                  <FaRegHeart
-                    className={`w-4 h-4 transition duration-200 ${
-                      isLiked ? "text-pink-500" : "text-slate-500"
-                    } group-hover:text-pink-500`}
-                  />
+                  {isLiking ? (
+                    <LoadingSpinner size="xs" />
+                  ) : (
+                    <FaRegHeart
+                      className={`w-4 h-4 transition duration-200 ${
+                        isLiked ? "text-pink-500" : "text-slate-500"
+                      } group-hover:text-pink-500`}
+                    />
+                  )}
                 </div>
                 <span
                   className={`text-sm transition duration-200 ${
                     isLiked ? "text-pink-500" : "text-slate-500"
                   } group-hover:text-pink-500`}
                 >
-                  {likeCount}
+                  {post.likes.length}
                 </span>
               </div>
             </div>
