@@ -9,6 +9,7 @@ import LoginPage from "@/pages/(business)/auth/login/login";
 import SignUpPage from "@/pages/(business)/auth/signup/signup";
 import NotificationPage from "@/pages/(business)/notification";
 import AuthGuard from "@/components/AuthLayout";
+import SubscribePage from "@/pages/(business)/premium";
 
 const router = createBrowserRouter([
   {
@@ -46,6 +47,10 @@ const router = createBrowserRouter([
   {
     path: paths.SIGNUP,
     element: <SignUpPage />,
+  },
+  {
+    path: paths.SUBSCRIBE,
+    element: <SubscribePage />,
   },
 ]);
 
