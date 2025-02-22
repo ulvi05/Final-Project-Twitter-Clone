@@ -35,6 +35,11 @@ const likePost = async (data: { postId: string }) => {
   return response.data;
 };
 
+const commentPost = async (data: { postId: string; text: string }) => {
+  const response = await axiosInstance.post(`/posts/comment/${data.postId}`);
+  return response.data;
+};
+
 const deletePost = async (data: { id: string }) => {
   return await axiosInstance.delete(`/posts/${data.id}`);
 };
@@ -43,6 +48,7 @@ const postService = {
   getPosts,
   create,
   likePost,
+  commentPost,
   deletePost,
 };
 

@@ -16,8 +16,9 @@ const RightPanel = () => {
   });
 
   const { follow, isPending } = useFollow();
-  //@ts-ignore
-  if (suggestedUsers?.length === 0) return <div className="w-0 md:w-64"></div>;
+
+  if ((suggestedUsers as unknown as User[])?.length === 0)
+    return <div className="w-0 md:w-64"></div>;
 
   return (
     <div className="hidden mx-4 my-4 lg:block max-w-[350px] sticky top-4 h-screen overflow-y-auto">
@@ -46,8 +47,7 @@ const RightPanel = () => {
             </>
           )}
           {!isLoading &&
-            //@ts-ignore
-            suggestedUsers?.map((user: User) => (
+            (suggestedUsers as unknown as User[])?.map((user: User) => (
               <Link
                 to={`/profile/${user.username}`}
                 className="flex items-center justify-between gap-4 hover:bg-[#1D1F23] p-2 rounded-lg transition-colors"

@@ -17,7 +17,7 @@ const Posts = ({ feedType }: PostsProps) => {
     refetch,
     isRefetching,
   } = useQuery({
-    queryKey: [QUERY_KEYS.POSTS, feedType],
+    queryKey: [QUERY_KEYS.POSTS],
     queryFn: () => postService.getPosts(feedType),
   });
 

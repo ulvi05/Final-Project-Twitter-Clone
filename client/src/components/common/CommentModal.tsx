@@ -4,25 +4,36 @@ import { Comment } from "@/types/Comment";
 
 import { useDialog, ModalTypeEnum } from "@/hooks/useDialog";
 import LoadingSpinner from "./LoadingSpinner";
+import { QUERY_KEYS } from "@/constants/query-keys";
+import { useMutation } from "@tanstack/react-query";
+import postService from "@/services/posts";
+import { toast } from "sonner";
+import queryClient from "@/config/queryClient";
 
 const CommentModal = ({ post }: { post: PostType }) => {
   const { type, isOpen, closeDialog } = useDialog();
   const [comment, setComment] = useState("");
-  const [isCommenting, setIsCommenting] = useState(false);
 
   if (type !== ModalTypeEnum.COMMENT || !isOpen) return null;
 
+  const { mutate: commentPost, isPending: isCommenting } = useMutation({
+    mutationFn: postService.commentPost,
+    onSuccess: () => {
+      toast.success("Comment posted successfully");
+      setComment("");
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.POSTS],
+      });
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+
   const handlePostComment = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!comment.trim()) return;
-
-    setIsCommenting(true);
-
-    setTimeout(() => {
-      console.log("New comment:", comment);
-      setComment("");
-      setIsCommenting(false);
-    }, 1000);
+    if (isCommenting) return;
+    commentPost({ postId: post._id, text: comment });
   };
 
   return (
