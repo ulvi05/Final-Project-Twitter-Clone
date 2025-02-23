@@ -8,6 +8,11 @@ const getAll = async () => {
   return response.data;
 };
 
+const UserProfile = async (username: string) => {
+  const response = await axiosInstance.get(`/users/profile/${username}`);
+  return response.data;
+};
+
 const followUser = async (userId: string) => {
   const response = await axiosInstance.post(`/users/follow/${userId}`);
   return response.data;
@@ -15,6 +20,7 @@ const followUser = async (userId: string) => {
 
 const usersService = {
   getAll,
+  UserProfile,
   followUser,
 };
 

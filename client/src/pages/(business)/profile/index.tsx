@@ -1,5 +1,5 @@
-import { useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import { User } from "@/types/User";
 
 import Posts from "@/components/common/Posts";
@@ -11,6 +11,10 @@ import { POSTS } from "@/utils/db/dummy-data";
 import { FaArrowLeft, FaLink } from "react-icons/fa6";
 import { IoCalendarOutline } from "react-icons/io5";
 import { MdEdit } from "react-icons/md";
+import { useQuery } from "@tanstack/react-query";
+import { QUERY_KEYS } from "@/constants/query-keys";
+import usersService from "@/services/users";
+import { formatMemberSinceDate } from "@/utils/date";
 
 type CoverImageProps = {
   coverImg: string | null;
@@ -131,7 +135,9 @@ const BioSection = ({ user }: { user: User }) => (
       )}
       <div className="flex items-center gap-2">
         <IoCalendarOutline className="w-4 h-4 text-slate-500" />
-        <span className="text-sm text-slate-500">Joined Febuary 2024</span>
+        <span className="text-sm text-slate-500">
+          {formatMemberSinceDate(user?.createdAt)}
+        </span>
       </div>
     </div>
     <div className="flex gap-2">
@@ -151,8 +157,10 @@ const FeedTabs = ({
   feedType,
   setFeedType,
 }: {
-  feedType: string;
-  setFeedType: React.Dispatch<React.SetStateAction<string>>;
+  feedType: "posts" | "likes" | "forYou" | "following";
+  setFeedType: React.Dispatch<
+    React.SetStateAction<"posts" | "likes" | "forYou" | "following">
+  >;
 }) => {
   const tabs = [
     { key: "posts", label: "Posts" },
@@ -167,7 +175,9 @@ const FeedTabs = ({
           className={`relative flex justify-center flex-1 p-3 cursor-pointer ${
             feedType === key ? "text-primary" : "text-slate-500"
           } hover:bg-secondary`}
-          onClick={() => setFeedType(key)}
+          onClick={() =>
+            setFeedType(key as "posts" | "likes" | "forYou" | "following")
+          }
         >
           {label}
           {feedType === key && (
@@ -182,25 +192,28 @@ const FeedTabs = ({
 const ProfilePage = () => {
   const [coverImg, setCoverImg] = useState<string | null>(null);
   const [profileImg, setProfileImg] = useState<string | null>(null);
-  const [feedType, setFeedType] = useState("posts");
+  const [feedType, setFeedType] = useState<
+    "forYou" | "following" | "likes" | "posts"
+  >("posts");
 
   const coverImgRef = useRef<HTMLInputElement | null>(null);
   const profileImgRef = useRef<HTMLInputElement | null>(null);
 
-  const isLoading = false;
+  const { username } = useParams();
+  if (!username) return <p>User not found</p>;
+
   const isMyProfile = true;
 
-  const user = {
-    _id: "1",
-    fullName: "Ulvi Aghazade",
-    username: "u1lviii",
-    profileImg: "/avatars/samurai.png",
-    coverImg: "/cover.png",
-    bio: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-    link: "https://x.com/u1lviii",
-    following: ["1", "2", "3"],
-    followers: ["1", "2", "3"],
-  };
+  const {
+    data: user,
+    isLoading,
+    refetch,
+    isRefetching,
+  } = useQuery({
+    queryKey: [QUERY_KEYS.USER_PROFILE, username],
+    queryFn: () => usersService.UserProfile(username),
+  });
+  console.log("Fetched user data:", user);
 
   const handleImgChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -218,20 +231,24 @@ const ProfilePage = () => {
     }
   };
 
+  useEffect(() => {
+    refetch();
+  }, [username, refetch]);
+
   return (
     <div className="flex-[4_4_0] border-r border-gray-700 min-h-screen">
-      {isLoading && <ProfileHeaderSkeleton />}
-      {!isLoading && !user && (
+      {(isLoading || isRefetching) && <ProfileHeaderSkeleton />}
+      {!isLoading && !isRefetching && !user && (
         <p className="mt-4 text-lg text-center">User not found</p>
       )}
-      {!isLoading && user && (
+      {!isLoading && !isRefetching && user && (
         <>
           <Header fullName={user.fullName} postCount={POSTS.length} />
 
           <div className="relative">
             <CoverImage
               coverImg={coverImg || user.coverImg}
-              defaultImg="/default-cover.png"
+              defaultImg="/cover.png"
               onEditClick={() => coverImgRef.current?.click()}
               inputRef={coverImgRef}
               onChange={(e) => handleImgChange(e, "coverImg")}
@@ -239,7 +256,7 @@ const ProfilePage = () => {
             />
             <ProfileImage
               profileImg={profileImg || user.profileImg}
-              defaultImg="/default-avatar.png"
+              defaultImg="/avatar-placeholder.png"
               onEditClick={() => profileImgRef.current?.click()}
               inputRef={profileImgRef}
               onChange={(e) => handleImgChange(e, "profileImg")}
@@ -268,7 +285,7 @@ const ProfilePage = () => {
           </div>
           <BioSection user={user} />
           <FeedTabs feedType={feedType} setFeedType={setFeedType} />
-          <Posts />
+          <Posts username={username} userId={user?._id} feedType={feedType} />
         </>
       )}
     </div>
