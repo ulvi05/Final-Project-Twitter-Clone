@@ -7,13 +7,16 @@ export enum ModalTypeEnum {
 interface DialogState {
   type: ModalTypeEnum | null;
   isOpen: boolean;
-  openDialog: (type: ModalTypeEnum) => void;
+  postId: string | null;
+  openDialog: (type: ModalTypeEnum, postId: string) => void;
   closeDialog: () => void;
 }
 
 export const useDialog = create<DialogState>((set) => ({
   type: null,
   isOpen: false,
-  openDialog: (type: ModalTypeEnum) => set({ type, isOpen: true }),
-  closeDialog: () => set({ isOpen: false, type: null }),
+  postId: null,
+  openDialog: (type: ModalTypeEnum, postId: string) =>
+    set({ type, isOpen: true, postId }),
+  closeDialog: () => set({ isOpen: false, type: null, postId: null }),
 }));
