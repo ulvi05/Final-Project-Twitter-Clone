@@ -1,36 +1,35 @@
 import { Link } from "react-router-dom";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 
 import { IoSettingsOutline } from "react-icons/io5";
 import { FaUser } from "react-icons/fa";
 import { FaHeart } from "react-icons/fa6";
+import { QUERY_KEYS } from "@/constants/query-keys";
+import notificationService from "@/services/notifications";
+import { toast } from "sonner";
+import { Notification } from "@/types/Notification";
 
 const NotificationPage = () => {
-  const isLoading = false;
-  const notifications = [
-    {
-      _id: "1",
-      from: {
-        _id: "1",
-        username: "johndoe",
-        profileImg: "/avatars/samurai.png",
-      },
-      type: "follow",
-    },
-    {
-      _id: "2",
-      from: {
-        _id: "2",
-        username: "janedoe",
-        profileImg: "/avatars/user-3.png",
-      },
-      type: "like",
-    },
-  ];
+  const queryClient = useQueryClient();
+  const { data: notifications, isLoading } = useQuery({
+    queryKey: [QUERY_KEYS.NOTIFICATIONS],
+    queryFn: notificationService.getAll,
+  });
 
-  const deleteNotifications = () => {
-    alert("All notifications deleted");
-  };
+  const { mutate: deleteNotifications } = useMutation({
+    mutationFn: notificationService.deleteAll,
+    onSuccess: () => {
+      toast.success("Notifications deleted successfully");
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.NOTIFICATIONS],
+      });
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
 
   return (
     <>
@@ -46,7 +45,9 @@ const NotificationPage = () => {
               className="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-52"
             >
               <li>
-                <a onClick={deleteNotifications}>Delete all notifications</a>
+                <a onClick={() => deleteNotifications()}>
+                  Delete all notifications
+                </a>
               </li>
             </ul>
           </div>
@@ -59,7 +60,7 @@ const NotificationPage = () => {
         {notifications?.length === 0 && (
           <div className="p-4 font-bold text-center">No notifications 🤔</div>
         )}
-        {notifications?.map((notification) => (
+        {notifications?.map((notification: Notification) => (
           <div className="border-b border-gray-700" key={notification._id}>
             <div className="flex gap-2 p-4">
               {notification.type === "follow" && (
