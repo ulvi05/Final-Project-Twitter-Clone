@@ -7,10 +7,12 @@ import { useEffect } from "react";
 import postService from "@/services/posts";
 
 interface PostsProps {
-  feedType: "forYou" | "following";
+  feedType: "forYou" | "following" | "likes" | "posts";
+  username?: string;
+  userId?: string;
 }
 
-const Posts = ({ feedType }: PostsProps) => {
+const Posts = ({ feedType, username, userId }: PostsProps) => {
   const {
     data: posts,
     isLoading,
@@ -18,12 +20,12 @@ const Posts = ({ feedType }: PostsProps) => {
     isRefetching,
   } = useQuery({
     queryKey: [QUERY_KEYS.POSTS],
-    queryFn: () => postService.getPosts(feedType),
+    queryFn: () => postService.getPosts(feedType, userId, username),
   });
 
   useEffect(() => {
     refetch();
-  }, [feedType, refetch]);
+  }, [feedType, refetch, username]);
 
   return (
     <>

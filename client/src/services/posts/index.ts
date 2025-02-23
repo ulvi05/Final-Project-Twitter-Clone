@@ -1,11 +1,25 @@
 import axiosInstance from "../axiosInstance";
 
-const getPosts = async (feedType: "forYou" | "following") => {
-  const endpoint = feedType === "following" ? "/posts/following" : "/posts/all";
+const getPosts = async (
+  feedType: "forYou" | "following" | "likes" | "posts",
+  userId?: string,
+  username?: string
+) => {
+  let endpoint = "";
+
+  if (feedType === "following") {
+    endpoint = "/posts/following";
+  } else if (feedType === "forYou") {
+    endpoint = "/posts/all";
+  } else if (feedType === "likes" && userId) {
+    endpoint = `/posts/likes/${userId}`;
+  } else if (feedType === "posts" && username) {
+    endpoint = `/posts/user/${username}`;
+  } else {
+    throw new Error("Missing userId or username for the specified feed type");
+  }
+
   const { data } = await axiosInstance.get(endpoint);
-
-  console.log(data);
-
   return data;
 };
 
