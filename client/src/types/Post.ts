@@ -9,4 +9,6 @@ export type PostType = {
   likes: string[];
   comments: Comment[];
   user: User;
+  createdAt: string;
+  updatedAt: string;
 };

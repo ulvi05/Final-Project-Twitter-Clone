@@ -36,7 +36,9 @@ const likePost = async (data: { postId: string }) => {
 };
 
 const commentPost = async (data: { postId: string; text: string }) => {
-  const response = await axiosInstance.post(`/posts/comment/${data.postId}`);
+  const response = await axiosInstance.post(`/posts/comment/${data.postId}`, {
+    text: data.text,
+  });
   return response.data;
 };
 

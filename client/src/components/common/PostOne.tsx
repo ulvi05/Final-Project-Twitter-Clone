@@ -14,6 +14,7 @@ import { IoIosMore } from "react-icons/io";
 import { toast } from "sonner";
 import LoadingSpinner from "./LoadingSpinner";
 import { QUERY_KEYS } from "@/constants/query-keys";
+import { formatPostDate } from "@/utils/date";
 
 const PostOne = ({ post }: { post: PostType }) => {
   const { openDialog } = useDialog();
@@ -23,7 +24,7 @@ const PostOne = ({ post }: { post: PostType }) => {
   const postOwner = post.user;
   const isLiked = post.likes.includes(user?._id ?? "");
   const isMyPost = user?._id === post.user._id;
-  const formattedDate = "1h";
+  const formattedDate = formatPostDate(post.createdAt);
 
   const { mutate: deletePost, isPending: isDeleting } = useMutation({
     mutationFn: postService.deletePost,
@@ -38,18 +39,21 @@ const PostOne = ({ post }: { post: PostType }) => {
   const { mutate: likePost, isPending: isLiking } = useMutation({
     mutationFn: postService.likePost,
     onSuccess: (updatedLikes) => {
-      queryClient.setQueryData([QUERY_KEYS.POSTS], (oldData: PostType[]) => {
-        if (!oldData) return [];
-        return oldData.map((p) => {
-          if (p._id === post._id) {
-            return {
-              ...p,
-              likes: updatedLikes,
-            };
-          }
-          return p;
-        });
-      });
+      queryClient.setQueryData(
+        [QUERY_KEYS.POSTS],
+        (oldData: PostType[] | undefined) => {
+          if (!oldData) return [];
+          return oldData.map((p) => {
+            if (p._id === post._id) {
+              return {
+                ...p,
+                likes: updatedLikes,
+              };
+            }
+            return p;
+          });
+        }
+      );
     },
   });
   console.log("Önceki veri:", queryClient.getQueryData([QUERY_KEYS.POSTS]));
@@ -71,7 +75,10 @@ const PostOne = ({ post }: { post: PostType }) => {
             to={`/profile/${postOwner.username}`}
             className="w-8 overflow-hidden rounded-full"
           >
-            <img src={postOwner.profileImage || "/avatar-placeholder.png"} />
+            <img
+              src={postOwner.profileImage || "/avatar-placeholder.png"}
+              alt="Profile"
+            />
           </Link>
         </div>
         <div className="flex flex-col flex-1">
@@ -193,7 +200,7 @@ const PostOne = ({ post }: { post: PostType }) => {
         </div>
       </div>
 
-      <CommentModal post={post} />
+      <CommentModal post={post} key={post._id} />
     </>
   );
 };
