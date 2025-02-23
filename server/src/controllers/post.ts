@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 import { v2 as cloudinary } from "cloudinary";
 import mongoose from "mongoose";
 
@@ -58,14 +58,14 @@ const deletePost = async (req: Request, res: Response) => {
   try {
     const post = await Post.findById(req.params.id);
     if (!post) {
-      res.status(404).json({ error: "Post not found" });
+      res.status(404).json({ message: "Post not found" });
       return;
     }
 
     if (!post.user || post.user.toString() !== req.user?._id.toString()) {
       res
         .status(401)
-        .json({ error: "You are not authorized to delete this post" });
+        .json({ message: "You are not authorized to delete this post" });
       return;
     }
 
@@ -98,13 +98,13 @@ const commentOnPost = async (req: Request, res: Response) => {
     const userId = req.user?._id;
 
     if (!text) {
-      res.status(400).json({ error: "Text field is required" });
+      res.status(400).json({ message: "Text field is required" });
       return;
     }
     const post = await Post.findById(postId);
 
     if (!post) {
-      res.status(400).json({ error: "Post not found" });
+      res.status(400).json({ message: "Post not found" });
       return;
     }
 
@@ -115,7 +115,7 @@ const commentOnPost = async (req: Request, res: Response) => {
     res.status(200).json(post);
   } catch (error) {
     console.log("Error in commentOnPost controller: ", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
@@ -128,7 +128,7 @@ const likeUnlikePost = async (req: Request, res: Response) => {
     const post = await Post.findById(postId);
 
     if (!post) {
-      res.status(404).json({ error: "Post not found" });
+      res.status(404).json({ message: "Post not found" });
       return;
     }
 
@@ -161,7 +161,7 @@ const likeUnlikePost = async (req: Request, res: Response) => {
     }
   } catch (error) {
     console.log("Error in likeUnlikePost: ", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
@@ -185,7 +185,7 @@ const getAllPosts = async (req: Request, res: Response) => {
     res.status(200).json(posts);
   } catch (error) {
     console.log("Error in getAllPosts controller: ", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
@@ -195,7 +195,7 @@ const getLikedPosts = async (req: Request, res: Response) => {
   try {
     const user = await User.findById(userId);
     if (!user) {
-      res.status(404).json({ error: "User not Found" });
+      res.status(404).json({ message: "User not Found" });
       return;
     }
     const likedPosts = await Post.find({ _id: { $in: user.likedPosts } })
@@ -210,7 +210,7 @@ const getLikedPosts = async (req: Request, res: Response) => {
     res.status(200).json(likedPosts);
   } catch (error) {
     console.log("Error in getLikedPosts controller: ", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
@@ -219,7 +219,7 @@ const getFollowingPosts = async (req: Request, res: Response) => {
     const userId = req.user?._id;
     const user = await User.findById(userId);
     if (!user) {
-      res.status(404).json({ error: "User Not Found" });
+      res.status(404).json({ message: "User Not Found" });
       return;
     }
     const following = user.following;
@@ -238,7 +238,7 @@ const getFollowingPosts = async (req: Request, res: Response) => {
     res.status(200).json(feedPosts);
   } catch (error) {
     console.log("Error in getFollowingPosts controller: ", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
@@ -248,7 +248,7 @@ const getUserPosts = async (req: Request, res: Response) => {
 
     const user = await User.findOne({ username });
     if (!user) {
-      res.status(400).json({ error: "User Not Found" });
+      res.status(400).json({ message: "User Not Found" });
       return;
     }
 
@@ -265,7 +265,7 @@ const getUserPosts = async (req: Request, res: Response) => {
     res.status(200).json(posts);
   } catch (error) {
     console.log("Error in getUserPosts controller: ", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
