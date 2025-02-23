@@ -1,44 +1,42 @@
 import { useState, useEffect } from "react";
+import { useMutation } from "@tanstack/react-query";
+import queryClient from "@/config/queryClient";
+import { QUERY_KEYS } from "@/constants/query-keys";
+import postService from "@/services/posts";
+
 import { PostType } from "@/types/Post";
 import { Comment } from "@/types/Comment";
 
 import { useDialog, ModalTypeEnum } from "@/hooks/useDialog";
 import LoadingSpinner from "./LoadingSpinner";
-import { QUERY_KEYS } from "@/constants/query-keys";
-import { useMutation } from "@tanstack/react-query";
-import postService from "@/services/posts";
 import { toast } from "sonner";
-import queryClient from "@/config/queryClient";
+import { IoIosTrash } from "react-icons/io";
+import { useAppSelector } from "@/hooks/main";
+import { selectUserData } from "@/store/features/userSlice";
 
 const CommentModal = ({ post }: { post: PostType }) => {
-  const { type, isOpen, closeDialog } = useDialog();
+  const { type, isOpen, postId, closeDialog } = useDialog();
+  const { user } = useAppSelector(selectUserData);
   const [comment, setComment] = useState("");
 
   useEffect(() => {
     const modal = document.getElementById(
       `comments_modal${post._id}`
     ) as HTMLDialogElement;
-    if (isOpen && type === ModalTypeEnum.COMMENT) {
+
+    if (isOpen && type === ModalTypeEnum.COMMENT && postId === post._id) {
       modal?.showModal();
     } else {
       modal?.close();
     }
-  }, [isOpen, type]);
+  }, [isOpen, type, postId, post._id]);
 
   const { mutate: commentPost, isPending: isCommenting } = useMutation({
     mutationFn: postService.commentPost,
-    onSuccess: (newComment) => {
-      queryClient.setQueryData(
-        [QUERY_KEYS.POSTS],
-        (oldData: PostType[] | undefined) => {
-          if (!oldData) return [];
-          return oldData.map((p) =>
-            p._id === newComment.postId
-              ? { ...p, comments: [...p.comments, newComment] }
-              : p
-          );
-        }
-      );
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.POSTS],
+      });
 
       toast.success("Comment posted successfully");
       setComment("");
@@ -47,11 +45,28 @@ const CommentModal = ({ post }: { post: PostType }) => {
       toast.error(error.message);
     },
   });
+  const { mutate: deleteComment, isPending: isDeleting } = useMutation({
+    mutationFn: postService.deleteComments,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.POSTS],
+      });
+      toast.success("Comment deleted successfully");
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Failed to delete comment");
+    },
+  });
 
   const handlePostComment = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (isCommenting) return;
     commentPost({ postId: post._id, text: comment });
+  };
+
+  const handleDeleteComment = (commentId: string) => {
+    if (isDeleting) return;
+    deleteComment({ postId: post._id, commentId });
   };
 
   return (
@@ -73,6 +88,7 @@ const CommentModal = ({ post }: { post: PostType }) => {
                 <div className="w-8 rounded-full">
                   <img
                     src={comment.user.profileImg || "/avatar-placeholder.png"}
+                    alt="Avatar"
                   />
                 </div>
               </div>
@@ -83,6 +99,18 @@ const CommentModal = ({ post }: { post: PostType }) => {
                 </span>
                 <div className="text-sm">{comment.text}</div>
               </div>
+
+              {user?._id === comment.user._id && (
+                <div className="ml-auto">
+                  <button
+                    onClick={() => handleDeleteComment(comment._id)}
+                    className="text-red-500 outline-none hover:text-red-700"
+                    disabled={isDeleting}
+                  >
+                    <IoIosTrash size={24} />
+                  </button>
+                </div>
+              )}
             </div>
           ))}
         </div>

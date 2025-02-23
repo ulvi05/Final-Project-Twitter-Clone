@@ -147,7 +147,7 @@ const PostOne = ({ post }: { post: PostType }) => {
             <div className="flex items-center justify-between w-2/3 gap-4">
               <div
                 className="flex items-center gap-1 cursor-pointer group"
-                onClick={() => openDialog(ModalTypeEnum.COMMENT)}
+                onClick={() => openDialog(ModalTypeEnum.COMMENT, post._id)}
               >
                 <div className="p-2 transition duration-200 rounded-full group-hover:bg-sky-900 group-hover:bg-opacity-50">
                   <FaRegComment className="w-4 h-4 text-slate-500 group-hover:text-sky-400" />

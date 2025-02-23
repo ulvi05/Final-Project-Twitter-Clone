@@ -12,6 +12,11 @@ router.get("/user/:username", authorize({}), postController.getUserPosts);
 router.post("/create", authorize({}), upload, postController.createPost);
 router.post("/like/:id", authorize({}), postController.likeUnlikePost);
 router.post("/comment/:id", authorize({}), postController.commentOnPost);
+router.delete(
+  "/:id/comment/:commentId",
+  authorize({}),
+  postController.deleteComment
+);
 router.delete("/:id", authorize({}), postController.deletePost);
 
 export default router;

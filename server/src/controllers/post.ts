@@ -119,6 +119,47 @@ const commentOnPost = async (req: Request, res: Response) => {
   }
 };
 
+const deleteComment = async (req: Request, res: Response) => {
+  try {
+    const { id: postId, commentId } = req.params;
+
+    if (!req.user || !req.user._id) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
+    }
+    const userId = req.user._id;
+
+    const post = await Post.findById(postId);
+    if (!post) {
+      res.status(404).json({ message: "Post not found" });
+      return;
+    }
+
+    const commentIndex = post.comments.findIndex(
+      (comment) => comment._id.toString() === commentId
+    );
+
+    if (commentIndex === -1) {
+      res.status(404).json({ message: "Comment not found" });
+      return;
+    }
+
+    if (post.comments[commentIndex].user.toString() !== userId.toString()) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
+    }
+
+    post.comments.splice(commentIndex, 1);
+
+    await post.save();
+
+    res.status(200).json({ message: "Comment deleted successfully" });
+  } catch (error) {
+    console.error("Error in deleteComment controller: ", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
 const likeUnlikePost = async (req: Request, res: Response) => {
   try {
     const userId = req.user?._id as mongoose.Types.ObjectId;
@@ -273,6 +314,7 @@ export default {
   createPost,
   deletePost,
   commentOnPost,
+  deleteComment,
   likeUnlikePost,
   getAllPosts,
   getLikedPosts,
