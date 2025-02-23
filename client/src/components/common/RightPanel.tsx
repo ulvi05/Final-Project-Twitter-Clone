@@ -18,9 +18,6 @@ const RightPanel = () => {
 
   const { follow, isPending } = useFollow();
 
-  if ((suggestedUsers as unknown as User[])?.length === 0)
-    return <div className="w-0 md:w-64"></div>;
-
   return (
     <div className="hidden mx-4 my-4 lg:block max-w-[350px] sticky top-4 h-screen overflow-y-auto">
       <div className="mb-4 flex flex-col gap-2.5 border-[#16181c] border p-4 rounded-xl shadow-md items-start">
@@ -48,6 +45,11 @@ const RightPanel = () => {
               <RightPanelSkeleton />
               <RightPanelSkeleton />
             </>
+          )}
+          {(suggestedUsers as unknown as User[])?.length === 0 && (
+            <p className="text-center text-gray-400">
+              You've followed everyone on X! 🎉
+            </p>
           )}
           {!isLoading &&
             (suggestedUsers as unknown as User[])?.map((user: User) => (
