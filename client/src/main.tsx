@@ -6,7 +6,7 @@ import router from "./routes";
 import { Toaster } from "sonner";
 
 import queryClient from "./config/queryClient";
-import { store } from "./store";
+import { store } from "./store/store";
 import "./styles/index.css";
 
 createRoot(document.getElementById("root")!).render(

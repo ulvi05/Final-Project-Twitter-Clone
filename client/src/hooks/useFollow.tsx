@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useAppDispatch, useAppSelector } from "./main";
 import usersService from "@/services/users";
 import {
@@ -7,9 +7,9 @@ import {
 } from "@/store/features/userSlice";
 import { QUERY_KEYS } from "@/constants/query-keys";
 import { toast } from "sonner";
+import queryClient from "@/config/queryClient";
 
 const useFollow = () => {
-  const queryClient = useQueryClient();
   const dispatch = useAppDispatch();
   const { user } = useAppSelector(selectUserData);
 

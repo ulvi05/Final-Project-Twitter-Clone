@@ -1,5 +1,5 @@
 import { selectUserData } from "@/store/features/userSlice";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { PostType } from "@/types/Post";
 import { useAppSelector } from "@/hooks/main";
@@ -15,11 +15,11 @@ import { toast } from "sonner";
 import LoadingSpinner from "./LoadingSpinner";
 import { QUERY_KEYS } from "@/constants/query-keys";
 import { formatPostDate } from "@/utils/date";
+import queryClient from "@/config/queryClient";
 
 const PostOne = ({ post }: { post: PostType }) => {
   const { openDialog } = useDialog();
   const { user } = useAppSelector(selectUserData);
-  const queryClient = useQueryClient();
 
   const postOwner = post.user;
   const isLiked = post.likes.includes(user?._id ?? "");

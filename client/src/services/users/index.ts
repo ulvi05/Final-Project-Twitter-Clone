@@ -1,5 +1,5 @@
 import axiosInstance from "../axiosInstance";
-import { GetAllUserResponse } from "./types";
+import { GetAllUserResponse, updateUserProfileTypes } from "./types";
 
 const getAll = async () => {
   const response = await axiosInstance.get<GetAllUserResponse>(
@@ -13,6 +13,11 @@ const UserProfile = async (username: string) => {
   return response.data;
 };
 
+const updateUserProfile = async (data: updateUserProfileTypes) => {
+  const response = await axiosInstance.put(`/users/update`, data);
+  return response.data;
+};
+
 const followUser = async (userId: string) => {
   const response = await axiosInstance.post(`/users/follow/${userId}`);
   return response.data;
@@ -22,6 +27,7 @@ const usersService = {
   getAll,
   UserProfile,
   followUser,
+  updateUserProfile,
 };
 
 export default usersService;
