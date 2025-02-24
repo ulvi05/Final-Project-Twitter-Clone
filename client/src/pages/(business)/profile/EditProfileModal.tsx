@@ -1,7 +1,17 @@
-import { useState, useRef } from "react";
+import queryClient from "@/config/queryClient";
+import { QUERY_KEYS } from "@/constants/query-keys";
+import { useAppDispatch } from "@/hooks/main";
+import usersService from "@/services/users";
+import { getCurrentUserAsync } from "@/store/features/userSlice";
+import { User } from "@/types/User";
+import { useMutation } from "@tanstack/react-query";
+import { useState, useRef, useEffect } from "react";
+import { toast } from "sonner";
 
-const EditProfileModal = () => {
+const EditProfileModal = ({ currentUser }: { currentUser: User }) => {
   const modalRef = useRef<HTMLDialogElement>(null);
+  const dispatch = useAppDispatch();
+
   const [formData, setFormData] = useState({
     fullName: "",
     username: "",
@@ -11,12 +21,38 @@ const EditProfileModal = () => {
     newPassword: "",
     currentPassword: "",
   });
+  const { mutate: updateProfile, isPending: updatingProfile } = useMutation({
+    mutationFn: usersService.updateUserProfile,
+    onSuccess: () => {
+      toast.success("Profile updated successfully");
+      dispatch(getCurrentUserAsync());
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.USER_PROFILE] });
+      modalRef.current?.close();
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
+
+  useEffect(() => {
+    if (currentUser) {
+      setFormData({
+        fullName: currentUser.fullName,
+        username: currentUser.username,
+        email: currentUser.email,
+        bio: currentUser.bio,
+        link: currentUser.link,
+        newPassword: "",
+        currentPassword: "",
+      });
+    }
+  }, [currentUser]);
 
   const openModal = () => {
     modalRef.current?.showModal();
@@ -41,7 +77,7 @@ const EditProfileModal = () => {
             className="flex flex-col gap-4"
             onSubmit={(e) => {
               e.preventDefault();
-              alert("Profile updated successfully");
+              updateProfile(formData);
               closeModal();
             }}
           >
@@ -74,7 +110,7 @@ const EditProfileModal = () => {
               />
               <textarea
                 placeholder="Bio"
-                className="flex-1 p-2 border border-gray-700 rounded input input-md"
+                className="flex-1 p-2 border border-gray-700 rounded resize-none input input-md max-h-32"
                 value={formData.bio}
                 name="bio"
                 onChange={handleInputChange}
@@ -107,7 +143,7 @@ const EditProfileModal = () => {
               onChange={handleInputChange}
             />
             <button className="text-white rounded-full btn btn-primary btn-sm">
-              Update
+              {updatingProfile ? "Updating..." : "Update"}
             </button>
           </form>
         </div>

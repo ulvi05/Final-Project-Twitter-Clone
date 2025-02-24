@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { User } from "@/types/User";
 import authService from "@/services/auth";
+import { RootState } from "../store";
 
 export interface UserState {
   user: User | null;
@@ -51,7 +52,7 @@ export const userSlice = createSlice({
 });
 
 export const {} = userSlice.actions;
-export const selectUserData = (state: { user: UserState }) => state.user;
+export const selectUserData = (state: RootState) => state.user;
 
 export const getCurrentUserAsync = createAsyncThunk(
   "user/getCurrentUser",

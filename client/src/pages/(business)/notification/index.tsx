@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 
@@ -10,9 +10,9 @@ import { QUERY_KEYS } from "@/constants/query-keys";
 import notificationService from "@/services/notifications";
 import { toast } from "sonner";
 import { Notification } from "@/types/Notification";
+import queryClient from "@/config/queryClient";
 
 const NotificationPage = () => {
-  const queryClient = useQueryClient();
   const { data: notifications, isLoading } = useQuery({
     queryKey: [QUERY_KEYS.NOTIFICATIONS],
     queryFn: notificationService.getAll,

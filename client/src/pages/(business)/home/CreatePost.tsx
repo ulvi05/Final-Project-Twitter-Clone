@@ -4,9 +4,10 @@ import { IoCloseSharp } from "react-icons/io5";
 import { FaRegSmile } from "react-icons/fa";
 import { useAppSelector } from "@/hooks/main";
 import { selectUserData } from "@/store/features/userSlice";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import postService from "@/services/posts";
 import { QUERY_KEYS } from "@/constants/query-keys";
+import queryClient from "@/config/queryClient";
 
 interface CreatePostProps {
   text: string;
@@ -23,7 +24,6 @@ const CreatePost: React.FC<CreatePostProps> = () => {
   const imgRef = useRef<HTMLInputElement | null>(null);
 
   const { user } = useAppSelector(selectUserData);
-  const queryClient = useQueryClient();
 
   const {
     mutate: createPost,
