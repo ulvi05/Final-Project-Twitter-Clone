@@ -1,16 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/constants/query-keys";
 import usersService from "@/services/users";
 
 import { User } from "@/types/User";
-import { useAppDispatch, useAppSelector } from "@/hooks/main";
-import {
-  getCurrentUserAsync,
-  selectUserData,
-} from "@/store/features/userSlice";
+import { useAppSelector } from "@/hooks/main";
+import { selectUserData } from "@/store/features/userSlice";
 import useFollow from "@/hooks/useFollow";
+import useUpdateUserProfile from "@/hooks/useUpdateUserProfile";
 
 import Posts from "@/components/common/Posts";
 import ProfileHeaderSkeleton from "@/components/skeletons/ProfileHeaderSkeleton";
@@ -22,8 +20,6 @@ import { FaArrowLeft, FaLink } from "react-icons/fa6";
 import { IoCalendarOutline } from "react-icons/io5";
 import { MdEdit } from "react-icons/md";
 import { formatMemberSinceDate } from "@/utils/date";
-import { toast } from "sonner";
-import queryClient from "@/config/queryClient";
 
 type CoverImageProps = {
   coverImg: string | null;
@@ -204,7 +200,6 @@ const ProfilePage = () => {
   const [feedType, setFeedType] = useState<
     "forYou" | "following" | "likes" | "posts"
   >("posts");
-  const dispatch = useAppDispatch();
   const { user: currentUser } = useAppSelector(selectUserData);
 
   const coverImgRef = useRef<HTMLInputElement | null>(null);
@@ -226,24 +221,7 @@ const ProfilePage = () => {
   });
   console.log("Fetched user data:", user);
 
-  const { mutate: updateProfile, isPending: updatingProfile } = useMutation({
-    mutationFn: () =>
-      usersService.updateUserProfile({
-        profileImage: profileImg ?? undefined,
-        coverImage: coverImg ?? undefined,
-      }),
-    onSuccess: () => {
-      toast.success("Profile updated successfully");
-      dispatch(getCurrentUserAsync());
-
-      Promise.all([
-        queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.USER_PROFILE] }),
-      ]);
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
+  const { updateProfile, updatingProfile } = useUpdateUserProfile();
 
   const isMyProfile = currentUser?.username === username;
 
@@ -314,7 +292,14 @@ const ProfilePage = () => {
             {(coverImg || profileImg) && (
               <button
                 className="px-4 ml-2 rounded-full btn btn-primary btn-sm"
-                onClick={() => updateProfile()}
+                onClick={async () => {
+                  await updateProfile({
+                    coverImage: coverImg ?? undefined,
+                    profileImage: profileImg ?? undefined,
+                  });
+                  setProfileImg(null);
+                  setCoverImg(null);
+                }}
                 disabled={updatingProfile}
               >
                 {updatingProfile ? "Updating..." : "Update"}

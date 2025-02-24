@@ -1,16 +1,10 @@
-import queryClient from "@/config/queryClient";
-import { QUERY_KEYS } from "@/constants/query-keys";
-import { useAppDispatch } from "@/hooks/main";
-import usersService from "@/services/users";
-import { getCurrentUserAsync } from "@/store/features/userSlice";
-import { User } from "@/types/User";
-import { useMutation } from "@tanstack/react-query";
 import { useState, useRef, useEffect } from "react";
-import { toast } from "sonner";
+import useUpdateUserProfile from "@/hooks/useUpdateUserProfile";
+
+import { User } from "@/types/User";
 
 const EditProfileModal = ({ currentUser }: { currentUser: User }) => {
   const modalRef = useRef<HTMLDialogElement>(null);
-  const dispatch = useAppDispatch();
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -21,18 +15,8 @@ const EditProfileModal = ({ currentUser }: { currentUser: User }) => {
     newPassword: "",
     currentPassword: "",
   });
-  const { mutate: updateProfile, isPending: updatingProfile } = useMutation({
-    mutationFn: usersService.updateUserProfile,
-    onSuccess: () => {
-      toast.success("Profile updated successfully");
-      dispatch(getCurrentUserAsync());
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.USER_PROFILE] });
-      modalRef.current?.close();
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
+
+  const { updateProfile, updatingProfile } = useUpdateUserProfile();
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -61,6 +45,12 @@ const EditProfileModal = ({ currentUser }: { currentUser: User }) => {
   const closeModal = () => {
     modalRef.current?.close();
   };
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    updateProfile(formData, {
+      onSuccess: () => closeModal(),
+    });
+  };
 
   return (
     <>
@@ -73,14 +63,7 @@ const EditProfileModal = ({ currentUser }: { currentUser: User }) => {
       <dialog ref={modalRef} className="modal">
         <div className="border border-gray-700 rounded-md shadow-md modal-box">
           <h3 className="my-3 text-lg font-bold">Update Profile</h3>
-          <form
-            className="flex flex-col gap-4"
-            onSubmit={(e) => {
-              e.preventDefault();
-              updateProfile(formData);
-              closeModal();
-            }}
-          >
+          <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
             <div className="flex flex-wrap gap-2">
               <input
                 type="text"
