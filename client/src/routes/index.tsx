@@ -10,6 +10,9 @@ import SignUpPage from "@/pages/(business)/auth/signup/signup";
 import NotificationPage from "@/pages/(business)/notification";
 import AuthGuard from "@/components/AuthLayout";
 import SubscribePage from "@/pages/(business)/premium";
+import ChatPage from "@/pages/(business)/chat";
+import ChatGPTPage from "@/pages/(business)/chatgpt";
+import SimpleLayout from "@/components/SimpleLayout";
 
 const router = createBrowserRouter([
   {
@@ -38,6 +41,24 @@ const router = createBrowserRouter([
           },
         ],
       },
+      {
+        path: "",
+        element: <SimpleLayout />,
+        children: [
+          {
+            path: paths.SUBSCRIBE,
+            element: <SubscribePage />,
+          },
+          {
+            path: paths.CHAT,
+            element: <ChatPage />,
+          },
+          {
+            path: paths.CHATGPT,
+            element: <ChatGPTPage />,
+          },
+        ],
+      },
     ],
   },
   {
@@ -47,10 +68,6 @@ const router = createBrowserRouter([
   {
     path: paths.SIGNUP,
     element: <SignUpPage />,
-  },
-  {
-    path: paths.SUBSCRIBE,
-    element: <SubscribePage />,
   },
 ]);
 
