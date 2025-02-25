@@ -65,7 +65,7 @@ const Sidebar = () => {
           </li>
           <li className="flex items-center justify-center cursor-pointer group md:justify-start">
             <Link
-              to="/messages"
+              to="/chat"
               className="flex items-center gap-3 py-2 pl-2 pr-4 transition-all duration-300 rounded-full cursor-pointer max-w-fit group-hover:bg-stone-900"
             >
               <IoMdMail className="w-6 h-6" />
@@ -74,7 +74,7 @@ const Sidebar = () => {
           </li>
           <li className="flex items-center justify-center cursor-pointer group md:justify-start">
             <Link
-              to="/grok"
+              to="/chatgpt"
               className="flex items-center gap-3 py-2 pl-2 pr-4 transition-all duration-300 rounded-full cursor-pointer max-w-fit group-hover:bg-stone-900"
             >
               <PiOpenAiLogoBold className="w-6 h-6" />

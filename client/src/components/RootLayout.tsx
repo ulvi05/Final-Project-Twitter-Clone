@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import Sidebar from "./common/Sidebar";
 import RightPanel from "./common/RightPanel";
+import { ChatPopover } from "./chat-popover";
 
 const RootLayout = () => {
   return (
@@ -10,6 +11,8 @@ const RootLayout = () => {
       <Outlet />
 
       <RightPanel />
+
+      <ChatPopover />
     </div>
   );
 };

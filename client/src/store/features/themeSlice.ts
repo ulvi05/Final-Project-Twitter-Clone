@@ -4,8 +4,9 @@ type ThemeState = {
   mode: "light" | "dark";
 };
 
+const storedTheme = localStorage.getItem("theme") as "dark" | "light" | null;
 const initialState: ThemeState = {
-  mode: "light",
+  mode: storedTheme || "light",
 };
 
 const themeSlice = createSlice({
@@ -13,10 +14,15 @@ const themeSlice = createSlice({
   initialState,
   reducers: {
     toggleTheme: (state) => {
-      state.mode = state.mode === "light" ? "dark" : "light";
+      const newTheme = state.mode === "light" ? "dark" : "light";
+      state.mode = newTheme;
+      document.documentElement.setAttribute("data-theme", newTheme);
+      localStorage.setItem("theme", newTheme);
     },
     setTheme: (state, action: PayloadAction<"light" | "dark">) => {
       state.mode = action.payload;
+      document.documentElement.setAttribute("data-theme", action.payload);
+      localStorage.setItem("theme", action.payload);
     },
   },
 });
