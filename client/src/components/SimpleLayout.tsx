@@ -3,8 +3,8 @@ import Sidebar from "./common/Sidebar";
 
 const SimpleLayout = () => {
   return (
-    <div className="flex w-full gap-8 mx-auto max-w-screen-2xl">
-      <div className="w-1/5 min-w-[250px]">
+    <div className="flex w-full max-w-screen-xl gap-8 mx-auto">
+      <div className="min-w-[250px] min-h-screen">
         <Sidebar />
       </div>
 

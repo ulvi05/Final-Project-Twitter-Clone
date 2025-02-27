@@ -87,7 +87,7 @@ const CommentModal = ({ post }: { post: PostType }) => {
               <div className="avatar">
                 <div className="w-8 rounded-full">
                   <img
-                    src={comment.user.profileImg || "/avatar-placeholder.png"}
+                    src={comment.user.profileImage || "/avatar-placeholder.png"}
                     alt="Avatar"
                   />
                 </div>

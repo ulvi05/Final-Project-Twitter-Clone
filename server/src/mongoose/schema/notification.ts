@@ -1,15 +1,16 @@
 import mongoose from "mongoose";
 import { INotification } from "../../types/notifitacion";
+const { Schema } = mongoose;
 
-const notificationSchema = new mongoose.Schema<INotification>(
+const notificationSchema = new Schema<INotification>(
   {
     from: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
     to: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
@@ -25,6 +26,12 @@ const notificationSchema = new mongoose.Schema<INotification>(
   },
   { timestamps: true }
 );
+notificationSchema.set("toJSON", {
+  virtuals: true,
+  transform: (doc, ret) => {
+    delete ret.__v;
+  },
+});
 
 const Notification = mongoose.model<INotification>(
   "Notification",

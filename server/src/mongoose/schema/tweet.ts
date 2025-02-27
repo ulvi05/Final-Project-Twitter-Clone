@@ -1,31 +1,32 @@
 import mongoose from "mongoose";
+const { Schema } = mongoose;
 
-const tweetSchema = new mongoose.Schema({
+const tweetSchema = new Schema({
   content: {
     type: String,
     required: true,
     maxlength: 160,
   },
   author: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: "User",
     required: true,
   },
   likes: [
     {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "User",
     },
   ],
   retweets: [
     {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "User",
     },
   ],
   comments: [
     {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "Comment",
     },
   ],
@@ -39,6 +40,12 @@ const tweetSchema = new mongoose.Schema({
   updatedAt: {
     type: Date,
     default: Date.now,
+  },
+});
+tweetSchema.set("toJSON", {
+  virtuals: true,
+  transform: (doc, ret) => {
+    delete ret.__v;
   },
 });
 

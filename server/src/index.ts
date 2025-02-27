@@ -1,20 +1,23 @@
 import express from "express";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
+import { v2 as cloudinary } from "cloudinary";
 import cookieParser from "cookie-parser";
 import session from "express-session";
 import passport from "passport";
 import cors from "cors";
 import path from "path";
-import { v2 as cloudinary } from "cloudinary";
 
-import authRoutes from "./src/routes/auth";
-import userRoutes from "./src/routes/users";
-import postRoutes from "./src/routes/posts";
-import notificationRoutes from "./src/routes/notification";
+import { createServer } from "node:http";
 
-import "./src/auth/local-strategy";
-import "./src/auth/google";
+import notificationRoutes from "./routes/notification";
+import authRoutes from "./routes/auth";
+import userRoutes from "./routes/users";
+import postRoutes from "./routes/posts";
+
+import "./auth/local-strategy";
+import "./auth/google";
+import { connectSocket } from "./socket";
 
 dotenv.config();
 
@@ -27,6 +30,9 @@ cloudinary.config({
 const PORT = process.env.PORT;
 
 const app = express();
+const server = createServer(app);
+
+connectSocket(server);
 
 app.use(express.json({ limit: "5mb" }));
 app.use(cookieParser());
@@ -55,7 +61,7 @@ app.use("/users", userRoutes);
 app.use("/posts", postRoutes);
 app.use("/notifications", notificationRoutes);
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
