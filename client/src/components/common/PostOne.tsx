@@ -56,7 +56,6 @@ const PostOne = ({ post }: { post: PostType }) => {
       );
     },
   });
-  console.log("Önceki veri:", queryClient.getQueryData([QUERY_KEYS.POSTS]));
 
   const handleLikePost = () => {
     if (isLiking) return;

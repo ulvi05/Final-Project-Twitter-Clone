@@ -4,6 +4,6 @@ export interface Notification {
   isRead: boolean;
   from: {
     username: string;
-    profileImg?: string;
+    profileImage?: string;
   };
 }

@@ -5,6 +5,6 @@ export type Comment = {
     _id: string | undefined;
     username: string;
     fullName: string;
-    profileImg?: string;
+    profileImage?: string;
   };
 };

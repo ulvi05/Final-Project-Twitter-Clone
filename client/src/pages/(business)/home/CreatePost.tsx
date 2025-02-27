@@ -9,15 +9,9 @@ import postService from "@/services/posts";
 import { QUERY_KEYS } from "@/constants/query-keys";
 import queryClient from "@/config/queryClient";
 
-interface CreatePostProps {
-  text: string;
-  img: string;
-  video: string;
-}
-
 type FileInputEvent = React.ChangeEvent<HTMLInputElement>;
 
-const CreatePost: React.FC<CreatePostProps> = () => {
+const CreatePost: React.FC = () => {
   const [text, setText] = useState<string>("");
   const [media, setMedia] = useState<string | null>(null);
   const [mediaType, setMediaType] = useState<"image" | "video" | null>(null);
@@ -52,6 +46,10 @@ const CreatePost: React.FC<CreatePostProps> = () => {
       text,
       media: file,
     });
+
+    if (imgRef.current) {
+      imgRef.current.value = "";
+    }
   };
 
   const handleMediaChange = (e: FileInputEvent) => {
@@ -74,7 +72,7 @@ const CreatePost: React.FC<CreatePostProps> = () => {
   };
 
   const handleRemoveMedia = () => {
-    if (media && mediaType === "video") {
+    if (mediaType === "video" && media) {
       URL.revokeObjectURL(media);
     }
 
@@ -103,7 +101,7 @@ const CreatePost: React.FC<CreatePostProps> = () => {
         {media && (
           <div className="relative mx-auto w-72">
             <IoCloseSharp
-              className="absolute top-0 right-0 w-5 h-5 p-0.5 text-white bg-gray-800 rounded-full cursor-pointer"
+              className="absolute top-2 right-2 w-5 h-5 p-0.5 text-white bg-gray-800 rounded-full cursor-pointer z-10"
               onClick={handleRemoveMedia}
             />
             {mediaType === "image" ? (
