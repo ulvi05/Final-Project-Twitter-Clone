@@ -15,7 +15,7 @@ export default function ChatPage() {
   const [userId, setUserId] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const { data, isLoading: conversationLoading } = useQuery({
+  const { data: conversationData, isLoading: conversationLoading } = useQuery({
     queryKey: [QUERY_KEYS.USER_CONVERSATION],
     queryFn: () => conversationService.getConversation({ userId }),
     enabled: !!userId,

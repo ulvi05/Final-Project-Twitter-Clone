@@ -94,10 +94,8 @@ const Login = () => {
     mutate(data);
   };
 
-  const onGoogleFailure = () => {
-    console.log("Google login failed.");
-    toast.error("Google login failed.");
-  };
+  console.log("Google Client ID:", import.meta.env.VITE_APP_GOOGLE_CLIENT_ID);
+  console.log("Current Origin:", window.location.origin);
 
   return (
     <div className="flex h-screen max-w-screen-xl mx-auto">
@@ -158,10 +156,16 @@ const Login = () => {
         </form>
         <div className="mt-4">
           <GoogleLogin
-            onSuccess={onGoogleSuccess}
-            onError={onGoogleFailure}
-            useOneTap
+            onSuccess={(credentialResponse) => {
+              console.log("Google Login Success", credentialResponse);
+              onGoogleSuccess(credentialResponse);
+            }}
+            onError={() => {
+              console.log("Google Login Failed");
+              toast.error("Google login failed.");
+            }}
           />
+
           {isGooglePending && (
             <p className="mt-2 text-sm text-white">Logging in with Google...</p>
           )}
