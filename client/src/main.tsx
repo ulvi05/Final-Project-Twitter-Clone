@@ -8,12 +8,15 @@ import { Toaster } from "sonner";
 import queryClient from "./config/queryClient";
 import { store } from "./store/store";
 import "./styles/index.css";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 createRoot(document.getElementById("root")!).render(
-  <Provider store={store}>
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-      <Toaster richColors />
-    </QueryClientProvider>
-  </Provider>
+  <GoogleOAuthProvider clientId="298772498250-qe0nr18pu95hui2em7lraibaedqbjnrd.apps.googleusercontent.com">
+    <Provider store={store}>
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
+        <Toaster richColors />
+      </QueryClientProvider>
+    </Provider>
+  </GoogleOAuthProvider>
 );

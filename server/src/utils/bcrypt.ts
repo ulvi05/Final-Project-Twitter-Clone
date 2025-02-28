@@ -6,6 +6,12 @@ export function hashPassword(password: string) {
   const hashedPassword = bcrypt.hashSync(password, salt);
   return hashedPassword;
 }
-export function comparePasswords(password: string, hashedPassword: string) {
+export function comparePasswords(
+  password: string,
+  hashedPassword: string | undefined | null
+) {
+  if (!hashedPassword) {
+    throw new Error("Hashed password is not available");
+  }
   return bcrypt.compareSync(password, hashedPassword);
 }
