@@ -15,7 +15,8 @@ import {
   getCurrentUserAsync,
   selectUserData,
 } from "@/store/features/userSlice";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { GoogleLogin } from "@react-oauth/google";
 
 const loginSchema = z.object({
   email: z
@@ -35,6 +36,7 @@ const Login = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { user } = useAppSelector(selectUserData);
+  const [isGooglePending, setIsGooglePending] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -67,9 +69,34 @@ const Login = () => {
     },
   });
 
+  const { mutate: googleLogin } = useMutation({
+    mutationFn: authService.googleLogin,
+    onSuccess: (response) => {
+      toast.success(response.data.message);
+      dispatch(getCurrentUserAsync()).then(() => {
+        navigate("/profile");
+      });
+    },
+    onError: (error: AxiosError<AuthResponseType>) => {
+      setIsGooglePending(false);
+      const message = error.response?.data.message ?? "Google login failed!";
+      toast.error(message);
+    },
+  });
+
+  const onGoogleSuccess = ({ credential }: any) => {
+    setIsGooglePending(true);
+    googleLogin({ token: credential });
+  };
+
   const onSubmit = (data: LoginFormData) => {
     console.log("Form data:", data);
     mutate(data);
+  };
+
+  const onGoogleFailure = () => {
+    console.log("Google login failed.");
+    toast.error("Google login failed.");
   };
 
   return (
@@ -115,6 +142,11 @@ const Login = () => {
               </span>
             )}
           </div>
+          <div className="text-center">
+            <a href="/forgot-password" className="text-primary hover:underline">
+              Forgot Password?
+            </a>
+          </div>
 
           <button
             type="submit"
@@ -124,6 +156,16 @@ const Login = () => {
             Log in
           </button>
         </form>
+        <div className="mt-4">
+          <GoogleLogin
+            onSuccess={onGoogleSuccess}
+            onError={onGoogleFailure}
+            useOneTap
+          />
+          {isGooglePending && (
+            <p className="mt-2 text-sm text-white">Logging in with Google...</p>
+          )}
+        </div>
 
         <div className="flex flex-col gap-2 mt-4">
           <p className="text-lg text-white">Don't have an account?</p>

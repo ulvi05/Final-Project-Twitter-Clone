@@ -13,6 +13,8 @@ import SubscribePage from "@/pages/(business)/premium";
 import ChatPage from "@/pages/(business)/chat";
 import ChatGPTPage from "@/pages/(business)/chatgpt";
 import SimpleLayout from "@/components/SimpleLayout";
+import ForgotPassword from "@/pages/(business)/auth/forgot-password";
+import ResetPassword from "@/pages/(business)/auth/reset-password";
 
 const router = createBrowserRouter([
   {
@@ -68,6 +70,14 @@ const router = createBrowserRouter([
   {
     path: paths.SIGNUP,
     element: <SignUpPage />,
+  },
+  {
+    path: paths.FORGOT_PASSWORD,
+    element: <ForgotPassword />,
+  },
+  {
+    path: paths.RESET_PASSWORD(),
+    element: <ResetPassword />,
   },
 ]);
 

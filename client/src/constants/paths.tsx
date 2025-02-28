@@ -8,4 +8,6 @@ export const paths = {
   NOTIFICATION: "/notifications",
   SUBSCRIBE: "/subscribe",
   CHATGPT: "/chatgpt",
+  FORGOT_PASSWORD: "/forgot-password",
+  RESET_PASSWORD: (token = ":token") => `/reset-password/${token}`,
 };
