@@ -8,7 +8,11 @@ const router = express.Router();
 
 router.get("/", authorize({}), conversationController.getAll);
 
-router.get("/user", authorize({}), conversationController.getUserConversation);
+router.get(
+  "/:userId",
+  authorize({}),
+  conversationController.getUserConversation
+);
 
 router.post(
   "/",

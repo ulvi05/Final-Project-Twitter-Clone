@@ -17,7 +17,7 @@ const getAll = async (req: Request, res: Response) => {
 
 const getUserConversation = async (req: Request, res: Response) => {
   try {
-    let { userId } = req.query;
+    let { userId } = req.params;
     if (req.isAuthenticated()) {
       userId = req.user._id.toString();
     }
@@ -43,20 +43,27 @@ const getUserConversation = async (req: Request, res: Response) => {
 
 const create = async (req: Request, res: Response) => {
   try {
-    const { userId, userName } = req.matchedData;
-    let userData = {
-      userId,
-      userName,
-    };
-
-    if (req.isAuthenticated()) {
-      userData = {
-        userId: req.user._id,
-        userName: req.user.fullName,
-      };
+    if (!req.isAuthenticated() || !req.user) {
+      res.status(401).json({ message: "Authentication required" });
+      return;
     }
 
-    const conversation = await Conversation.create(userData);
+    const existingConversation = await Conversation.findOne({
+      userId: req.user._id,
+    }).populate("messages");
+
+    if (existingConversation) {
+      res.status(200).json({
+        message: "Conversation already exists",
+        items: existingConversation,
+      });
+      return;
+    }
+
+    const conversation = await Conversation.create({
+      userId: req.user._id,
+      userName: req.user.fullName,
+    });
 
     res.status(201).json({
       message: "Conversation created successfully",
