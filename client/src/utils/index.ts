@@ -8,10 +8,4 @@ export function cn(...inputs: ClassValue[]) {
 
 export function getUserId(user?: User | null) {
   if (user) return user._id;
-  let guestId = localStorage.getItem("user");
-  if (!guestId) {
-    guestId = Math.random().toString(36).substring(7);
-    localStorage.setItem("guestId", guestId);
-  }
-  return guestId;
 }

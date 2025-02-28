@@ -3,6 +3,5 @@ export const QUERY_KEYS = {
   SUGGESTED_USERS: "suggestedUsers",
   NOTIFICATIONS: "notifications",
   USER_PROFILE: "userProfile",
-  //   RECOMMENDATION_RENTS: "recommendationRents",
-  //   RENT_DETAIL: "rentDetail",
+  USER_CONVERSATION: "userConversation",
 };

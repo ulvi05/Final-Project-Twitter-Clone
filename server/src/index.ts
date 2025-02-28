@@ -14,6 +14,7 @@ import notificationRoutes from "./routes/notification";
 import authRoutes from "./routes/auth";
 import userRoutes from "./routes/users";
 import postRoutes from "./routes/posts";
+import conversationRoutes from "./routes/conversation";
 
 import "./auth/local-strategy";
 import "./auth/google";
@@ -60,6 +61,7 @@ app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/posts", postRoutes);
 app.use("/notifications", notificationRoutes);
+app.use("/conversation", conversationRoutes);
 
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

@@ -29,12 +29,16 @@ function onMessage(
   socket: Socket,
   socketUsers: Record<string, string>
 ) {
-  console.log("message:", message);
-  console.log("to:", to);
+  if (!socket.data.user) {
+    return socket.emit("error", "Authentication required");
+  }
 
   const socketId = socketUsers[to];
   if (socketId) {
-    socket.to(socketId).emit("message", message);
+    socket.to(socketId).emit("message", {
+      message,
+      from: socket.data.user.id,
+    });
   } else {
     console.log("User not found");
   }
