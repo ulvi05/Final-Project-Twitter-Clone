@@ -30,7 +30,7 @@ router.get(
   passport.authenticate("google", { failureRedirect: "/login" }),
   authController.googleAuth,
   (req, res) => {
-    res.redirect("/profile");
+    res.redirect("http://localhost:5173");
   }
 );
 

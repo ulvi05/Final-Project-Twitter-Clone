@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSelector } from "react-redux";
@@ -7,6 +8,7 @@ import conversationService from "@/services/conversation";
 import { getUserId } from "@/utils";
 import { QUERY_KEYS } from "@/constants/query-keys";
 import z from "zod";
+import CreateConversationModal from "./components/CreateConversationModal";
 
 const formSchema = z.object({
   name: z.string().min(2).max(50),
@@ -17,6 +19,8 @@ export const CreateConversation = () => {
   const { user } = useSelector(selectUserData);
   const userId = getUserId(user);
   const queryClient = useQueryClient();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -24,6 +28,7 @@ export const CreateConversation = () => {
       name: user?.fullName ? `${user?.fullName}` : "",
     },
   });
+
   const { mutate, isPending } = useMutation({
     mutationFn: conversationService.create,
     onSuccess: () => {
@@ -43,8 +48,8 @@ export const CreateConversation = () => {
 
   return (
     <div className="p-4">
-      <h1 className="mt-3 text-2xl font-semibold text-muted-foreground">
-        Need help? Start a conversation.
+      <h1 className="mt-3 text-2xl font-semibold text-white">
+        Start a conversation.
       </h1>
       <p className="my-3 text-primary">
         Fill out the form below for starting a conversation with our support
@@ -75,13 +80,18 @@ export const CreateConversation = () => {
         </div>
 
         <button
-          type="submit"
+          type="button"
           className="w-full btn btn-primary"
-          disabled={isPending}
+          onClick={() => setIsModalOpen(true)}
         >
           Start Conversation
         </button>
       </form>
+
+      <CreateConversationModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 };

@@ -1,10 +1,31 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import Posts from "@/components/common/Posts";
 import CreatePost from "./CreatePost";
+import {
+  getCurrentUserAsync,
+  selectUserData,
+} from "@/store/features/userSlice";
+import { useAppDispatch, useAppSelector } from "@/hooks/main";
+import { toast } from "sonner";
 
 const HomePage = () => {
   const [feedType, setFeedType] = useState<"forYou" | "following">("forYou");
+
+  const dispatch = useAppDispatch();
+  const { user, error } = useAppSelector(selectUserData);
+
+  useEffect(() => {
+    if (!user) {
+      dispatch(getCurrentUserAsync());
+    }
+  }, [user, dispatch]);
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+    }
+  }, [error]);
 
   return (
     <>

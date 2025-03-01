@@ -22,12 +22,17 @@ const followUser = async (userId: string) => {
   const response = await axiosInstance.post(`/users/follow/${userId}`);
   return response.data;
 };
+const getFollowedUsers = async () => {
+  const response = await axiosInstance.get("/users/followed");
+  return response.data;
+};
 
 const usersService = {
   getAll,
   UserProfile,
   followUser,
   updateUserProfile,
+  getFollowedUsers,
 };
 
 export default usersService;

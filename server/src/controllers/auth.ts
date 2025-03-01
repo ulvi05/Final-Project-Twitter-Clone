@@ -60,12 +60,17 @@ const googleAuth = async (req: Request, res: Response) => {
 
     const googleUser = req.user as IUser;
 
+    const token = crypto.randomBytes(32).toString("hex");
+
+    (req.session as any).token = token;
+
     req.logIn(googleUser, (err) => {
       if (err) {
         console.error("Error in req.logIn:", err);
         res.status(500).json({ message: "Login session error" });
         return;
       }
+
       res.json({
         message: `Welcome, ${googleUser.username}`,
         googleUser,

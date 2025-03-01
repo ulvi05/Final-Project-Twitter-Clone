@@ -187,9 +187,30 @@ const updateUser = async (req: Request, res: Response) => {
   }
 };
 
+const getFollowedUsers = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user?._id;
+    const currentUser = await User.findById(userId).populate(
+      "following",
+      "-password"
+    );
+
+    if (!currentUser) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+
+    res.status(200).json(currentUser.following);
+  } catch (error) {
+    console.error("Error in getFollowedUsers: ", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
 export default {
   getUserProfile,
   followUnfollowUser,
   getSuggestedUsers,
   updateUser,
+  getFollowedUsers,
 };

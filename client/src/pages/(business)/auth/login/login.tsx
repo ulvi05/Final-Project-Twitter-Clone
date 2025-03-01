@@ -15,8 +15,9 @@ import {
   getCurrentUserAsync,
   selectUserData,
 } from "@/store/features/userSlice";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { GoogleLogin } from "@react-oauth/google";
+import GoogleIcon from "@/assets/icons/google-icon.png";
 
 const loginSchema = z.object({
   email: z
@@ -36,7 +37,6 @@ const Login = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { user } = useAppSelector(selectUserData);
-  const [isGooglePending, setIsGooglePending] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -69,33 +69,12 @@ const Login = () => {
     },
   });
 
-  const { mutate: googleLogin } = useMutation({
-    mutationFn: authService.googleLogin,
-    onSuccess: (response) => {
-      toast.success(response.data.message);
-      dispatch(getCurrentUserAsync()).then(() => {
-        navigate("/profile");
-      });
-    },
-    onError: (error: AxiosError<AuthResponseType>) => {
-      setIsGooglePending(false);
-      const message = error.response?.data.message ?? "Google login failed!";
-      toast.error(message);
-    },
-  });
-
-  const onGoogleSuccess = ({ credential }: any) => {
-    setIsGooglePending(true);
-    googleLogin({ token: credential });
-  };
-
   const onSubmit = (data: LoginFormData) => {
     console.log("Form data:", data);
     mutate(data);
   };
 
   console.log("Google Client ID:", import.meta.env.VITE_APP_GOOGLE_CLIENT_ID);
-  console.log("Current Origin:", window.location.origin);
 
   return (
     <div className="flex h-screen max-w-screen-xl mx-auto">
@@ -155,20 +134,17 @@ const Login = () => {
           </button>
         </form>
         <div className="mt-4">
-          <GoogleLogin
-            onSuccess={(credentialResponse) => {
-              console.log("Google Login Success", credentialResponse);
-              onGoogleSuccess(credentialResponse);
+          <button
+            className="w-[300px] mb-2 mt-2 flex mx-auto  justify-center items-center gap-2  p-2 cursor-pointer border border-solid rounded-3xl  border-inherit font-bold"
+            onClick={() => {
+              window.location.href = `${
+                import.meta.env.VITE_APP_API_BASE_URL
+              }/auth/google`;
             }}
-            onError={() => {
-              console.log("Google Login Failed");
-              toast.error("Google login failed.");
-            }}
-          />
-
-          {isGooglePending && (
-            <p className="mt-2 text-sm text-white">Logging in with Google...</p>
-          )}
+          >
+            <img src={GoogleIcon} className="w-[1.5rem] h-[1.5rem]" alt="" />
+            Google
+          </button>
         </div>
 
         <div className="flex flex-col gap-2 mt-4">
