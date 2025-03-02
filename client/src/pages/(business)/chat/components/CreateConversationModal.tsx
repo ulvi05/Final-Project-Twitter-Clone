@@ -4,9 +4,13 @@ import usersService from "@/services/users";
 export default function CreateConversationModal({
   isOpen,
   onClose,
+  onStartConversation,
+  isPending,
 }: {
   isOpen: boolean;
   onClose: () => void;
+  onStartConversation: (userId: string) => void;
+  isPending: boolean;
 }) {
   const [followedUsers, setFollowedUsers] = useState<any[]>([]);
   const [search, setSearch] = useState("");
@@ -59,7 +63,7 @@ export default function CreateConversationModal({
             {filteredUsers.map((user) => (
               <div
                 key={user._id}
-                className="flex items-center justify-between p-2 border-b cursor-pointer hover:bg-gray-100 hover:text-white"
+                className="flex items-center justify-between p-2 text-white border-b cursor-pointer hover:bg-gray-100 hover:text-black"
                 onClick={() => handleStartConversation(user._id)}
               >
                 <div className="flex items-center space-x-2">
@@ -70,7 +74,13 @@ export default function CreateConversationModal({
                   />
                   <span>{user.username}</span>
                 </div>
-                <button className="btn btn-primary btn-sm">Start</button>
+                <button
+                  className="text-white btn btn-primary btn-sm"
+                  onClick={() => onStartConversation(user._id)}
+                  disabled={isPending}
+                >
+                  {isPending ? "Starting..." : "Start"}
+                </button>
               </div>
             ))}
           </div>

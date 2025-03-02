@@ -60,10 +60,6 @@ const googleAuth = async (req: Request, res: Response) => {
 
     const googleUser = req.user as IUser;
 
-    const token = crypto.randomBytes(32).toString("hex");
-
-    (req.session as any).token = token;
-
     req.logIn(googleUser, (err) => {
       if (err) {
         console.error("Error in req.logIn:", err);
@@ -71,10 +67,7 @@ const googleAuth = async (req: Request, res: Response) => {
         return;
       }
 
-      res.json({
-        message: `Welcome, ${googleUser.username}`,
-        googleUser,
-      });
+      res.redirect("http://localhost:5173");
     });
   } catch (error) {
     console.error(error);

@@ -7,20 +7,12 @@ const getConversation = async ({ userId }: { userId: string }) => {
   );
 };
 
-const createConversation = async ({
-  userEmail,
-  userName,
-  userId,
-}: {
+const createConversation = async (data: {
   userEmail: string;
-  userName: string;
+  username: string;
   userId: string;
 }) => {
-  return await axiosInstance.post("/conversation", {
-    userEmail,
-    userName,
-    userId,
-  });
+  return await axiosInstance.post("/conversation", data);
 };
 
 const conversationService = {

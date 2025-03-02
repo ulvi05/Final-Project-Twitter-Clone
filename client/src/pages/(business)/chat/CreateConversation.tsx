@@ -1,36 +1,18 @@
 import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useSelector } from "react-redux";
+import { useMutation } from "@tanstack/react-query";
 import { selectUserData } from "@/store/features/userSlice";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import conversationService from "@/services/conversation";
-import { getUserId } from "@/utils";
 import { QUERY_KEYS } from "@/constants/query-keys";
-import z from "zod";
 import CreateConversationModal from "./components/CreateConversationModal";
-
-const formSchema = z.object({
-  name: z.string().min(2).max(50),
-  email: z.string().min(2).max(50),
-});
+import queryClient from "@/config/queryClient";
 
 export const CreateConversation = () => {
   const { user } = useSelector(selectUserData);
-  const userId = getUserId(user);
-  const queryClient = useQueryClient();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: user?.email || "",
-      name: user?.fullName ? `${user?.fullName}` : "",
-    },
-  });
-
   const { mutate, isPending } = useMutation({
-    mutationFn: conversationService.create,
+    mutationFn: conversationService.createConversation,
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.USER_CONVERSATION],
@@ -38,11 +20,13 @@ export const CreateConversation = () => {
     },
   });
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
+  function handleStartConversation(selectedUserId: string) {
+    if (!user) return;
+
     mutate({
-      userEmail: data.email,
-      userName: data.name,
-      userId,
+      userEmail: user.email,
+      username: user.fullName,
+      userId: selectedUserId,
     });
   }
 
@@ -52,45 +36,23 @@ export const CreateConversation = () => {
         Start a conversation.
       </h1>
       <p className="my-3 text-primary">
-        Fill out the form below for starting a conversation with our support
+        Select a user to start a conversation with our support.
       </p>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        <div className="form-control">
-          <label className="label">
-            <span className="text-lg font-medium label-text">Full Name</span>
-          </label>
-          <input
-            disabled={!!user}
-            placeholder="John Doe"
-            className="w-full input input-bordered input-primary"
-            {...form.register("name")}
-          />
-        </div>
 
-        <div className="form-control">
-          <label className="label">
-            <span className="text-lg font-medium label-text">Email</span>
-          </label>
-          <input
-            disabled={!!user}
-            placeholder="name@example.com"
-            className="w-full input input-bordered input-primary"
-            {...form.register("email")}
-          />
-        </div>
-
-        <button
-          type="button"
-          className="w-full btn btn-primary"
-          onClick={() => setIsModalOpen(true)}
-        >
-          Start Conversation
-        </button>
-      </form>
+      <button
+        type="button"
+        className="w-full text-white btn btn-primary"
+        onClick={() => setIsModalOpen(true)}
+        disabled={isPending}
+      >
+        {isPending ? "Starting..." : "Start Conversation"}
+      </button>
 
       <CreateConversationModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+        onStartConversation={handleStartConversation}
+        isPending={isPending}
       />
     </div>
   );

@@ -1,4 +1,6 @@
 import { DefaultEventsMap, Socket } from "socket.io";
+import Message from "../mongoose/schema/message";
+import User from "../mongoose/schema/user";
 
 export function SocketHandlers(
   socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
@@ -9,7 +11,7 @@ export function SocketHandlers(
     onRegister(userId, socket, socketUsers);
   });
 
-  socket.on("message", (data: { message: string; to: string }) =>
+  socket.on("message", (data: { message: string; to: string; from: string }) =>
     onMessage(data, socket, socketUsers)
   );
 
@@ -24,23 +26,35 @@ function onRegister(
   socketUsers[userId] = socket.id;
 }
 
-function onMessage(
-  { message, to }: { message: string; to: string },
+async function onMessage(
+  { message, to, from }: { message: string; to: string; from: string },
   socket: Socket,
   socketUsers: Record<string, string>
 ) {
-  if (!socket.data.user) {
-    return socket.emit("error", "Authentication required");
-  }
+  try {
+    if (!socket.data.user) {
+      return socket.emit("error", "Authentication required");
+    }
 
-  const socketId = socketUsers[to];
-  if (socketId) {
-    socket.to(socketId).emit("message", {
-      message,
-      from: socket.data.user.id,
+    const socketId = socketUsers[to];
+
+    const user = await User.findById(from);
+
+    const messageItem = await Message.create({
+      text: message,
+      userId: from,
     });
-  } else {
-    console.log("User not found");
+
+    if (socketId) {
+      socket.to(socketId).emit("message", {
+        message,
+        from: socket.data.user.id,
+      });
+    } else {
+      console.log("User not found");
+    }
+  } catch (error) {
+    console.log(error);
   }
 }
 
