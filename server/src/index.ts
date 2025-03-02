@@ -19,6 +19,7 @@ import conversationRoutes from "./routes/conversation";
 import "./auth/local-strategy";
 import "./auth/google";
 import { connectSocket } from "./socket";
+import "./mongoose/schema/message";
 
 dotenv.config();
 

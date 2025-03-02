@@ -66,10 +66,8 @@ const googleAuth = async (req: Request, res: Response) => {
         res.status(500).json({ message: "Login session error" });
         return;
       }
-      res.json({
-        message: `Welcome, ${googleUser.username}`,
-        googleUser,
-      });
+
+      res.redirect("http://localhost:5173");
     });
   } catch (error) {
     console.error(error);

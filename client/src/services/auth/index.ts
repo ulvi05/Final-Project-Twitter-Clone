@@ -16,15 +16,6 @@ const register = async (payload: RegisterRequestPayloadType) => {
 const logout = async () => {
   return await axiosInstance.post("/auth/logout");
 };
-const googleLogin = (data: { token: string }) => {
-  return axiosInstance.post(
-    `${import.meta.env.VITE_APP_API_BASE_URL}/auth/google/callback`,
-    data,
-    {
-      withCredentials: true,
-    }
-  );
-};
 
 const getCurrentUser = async () => {
   return await axiosInstance.get("/auth/current-user");
@@ -42,7 +33,6 @@ const authService = {
   login,
   register,
   getCurrentUser,
-  googleLogin,
   logout,
   ForgotPassword,
   ResetPassword,
