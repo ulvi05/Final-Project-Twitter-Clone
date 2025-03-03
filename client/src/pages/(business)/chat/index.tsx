@@ -5,148 +5,74 @@ import { useAppSelector } from "@/hooks/main";
 import { useSocket } from "@/hooks/use-socket";
 import conversationService from "@/services/conversation";
 import { selectUserData } from "@/store/features/userSlice";
-import { cn, getUserId } from "@/utils";
+import { cn } from "@/utils";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { CreateConversation } from "./CreateConversation";
+import Sidebar from "./components/Sidebar";
 
 export default function ChatPage() {
   const socket = useSocket();
-  const { user, loading } = useAppSelector(selectUserData);
+  const { user } = useAppSelector(selectUserData);
   const [userId, setUserId] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const { data: conversationData, isLoading: conversationLoading } = useQuery({
-    queryKey: [QUERY_KEYS.USER_CONVERSATION],
-    queryFn: () => conversationService.getConversation({ userId }),
-    enabled: !!userId,
-  });
-
-  const isLoading = loading || conversationLoading;
-
-  console.log("user", user?._id);
-
-  // useEffect(() => {
-  //   if (!socket) return;
-  //   socket.on("message", (message) => {
-  //     console.log(message);
-  //   });
-  // }, [socket]);
+  const { data: conversationCreateData, isLoading: conversationCreateLoading } =
+    useQuery({
+      queryKey: [QUERY_KEYS.USER_CONVERSATION, userId],
+      queryFn: () => conversationService.getConversation({ userId }),
+      enabled: !!userId,
+    });
 
   useEffect(() => {
-    if (!loading) {
-      setUserId(getUserId(user) || "");
-    }
-  }, [loading]);
+    if (!socket) return;
+    socket.on("message", (message) => {
+      console.log(message);
+    });
+
+    return () => {
+      socket.off("message");
+    };
+  }, [socket]);
 
   return (
     <div className="flex min-h-screen antialiased text-gray-800">
+      <Sidebar onSelectConversation={setUserId} />
       <div className="flex w-full h-full overflow-x-hidden">
-        <div className="flex flex-col w-64 py-8 pl-2 pr-2.5 bg-black border-r border-gray-700 flex-shrink-0">
-          <div className="flex flex-row items-center justify-center w-full h-12">
-            <div className="flex items-center justify-center w-10 h-10 text-black bg-indigo-100 rounded-2xl">
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
-                ></path>
-              </svg>
-            </div>
-            <div className="ml-2 text-2xl font-bold text-white">Messages</div>
-          </div>
-          <div className="flex flex-col mt-8">
-            <div className="flex flex-row items-center justify-between text-xs">
-              <span className="font-bold text-white">Active Conversations</span>
-              <span className="flex items-center justify-center w-4 h-4 text-black bg-white rounded-full">
-                4
-              </span>
-            </div>
-            <RenderIf condition={isLoading}>
-              <div className="flex items-center justify-center w-full h-full translate-y-16">
-                <LoadingSpinner />
-              </div>
-            </RenderIf>
-            <RenderIf condition={!isLoading}>
-              <div className="flex flex-col mt-4 -mx-2 space-y-1 overflow-y-auto h-52">
-                <button className="flex flex-row items-center p-2 hover:bg-[#1D1F23] rounded-xl">
-                  <div className="flex items-center justify-center w-8 h-8 bg-indigo-200 rounded-full">
-                    H
-                  </div>
-                  <div className="ml-2 text-sm font-semibold text-white">
-                    Henry Boyd
-                  </div>
-                </button>
-                <button className="flex flex-row items-center p-2 hover:bg-[#1D1F23] rounded-xl">
-                  <div className="flex items-center justify-center w-8 h-8 bg-gray-200 rounded-full">
-                    M
-                  </div>
-                  <div className="ml-2 text-sm font-semibold text-white">
-                    Marta Curtis
-                  </div>
-                  <div className="flex items-center justify-center w-4 h-4 ml-auto text-xs leading-none text-white bg-red-500 rounded">
-                    2
-                  </div>
-                </button>
-                <button className="flex flex-row items-center p-2 hover:bg-[#1D1F23] rounded-xl">
-                  <div className="flex items-center justify-center w-8 h-8 bg-orange-200 rounded-full">
-                    P
-                  </div>
-                  <div className="ml-2 text-sm font-semibold text-white">
-                    Philip Tucker
-                  </div>
-                </button>
-                <button className="flex flex-row items-center p-2 hover:bg-[#1D1F23] rounded-xl">
-                  <div className="flex items-center justify-center w-8 h-8 bg-pink-200 rounded-full">
-                    C
-                  </div>
-                  <div className="ml-2 text-sm font-semibold text-white">
-                    Christine Reid
-                  </div>
-                </button>
-                <button className="flex flex-row items-center p-2 hover:bg-[#1D1F23] rounded-xl">
-                  <div className="flex items-center justify-center w-8 h-8 bg-purple-200 rounded-full">
-                    J
-                  </div>
-                  <div className="ml-2 text-sm font-semibold text-white">
-                    Jerry Guzman
-                  </div>
-                </button>
-              </div>
-            </RenderIf>
-          </div>
-        </div>
-        <RenderIf condition={isLoading}>
+        <RenderIf condition={conversationCreateLoading}>
           <div className="flex items-center justify-center w-full h-full translate-y-40">
             <LoadingSpinner />
           </div>
         </RenderIf>
-        <RenderIf condition={!isLoading}>
-          <RenderIf condition={!conversationData}>
+        <RenderIf condition={!conversationCreateLoading}>
+          <RenderIf condition={!conversationCreateData}>
             <div className="flex items-center justify-center w-full h-screen">
               <CreateConversation />
             </div>
           </RenderIf>
-          <RenderIf condition={!!conversationData}>
+          <RenderIf condition={conversationCreateLoading}>
+            <div className="flex items-center justify-center w-full h-full translate-y-40">
+              <LoadingSpinner />
+            </div>
+          </RenderIf>
+          <RenderIf
+            condition={!!conversationCreateData && !conversationCreateLoading}
+          >
             <div className="flex flex-col flex-auto h-screen p-6 border-r border-gray-700">
               <div className="flex flex-col flex-1 h-full p-4 text-white bg-black rounded-2xl">
                 <div className="flex flex-col h-full mb-4 overflow-x-auto">
                   <div className="flex flex-col h-full">
                     <div className="grid grid-cols-12 gap-y-2 max-h-[640px]">
-                      <MessageItem message="Hello" owner />
-                      <MessageItem message="Hi" owner={false} />
-                      <MessageItem message="How are you?" owner />
-                      <MessageItem message="Fine you?" owner={false} />
-                      <MessageItem message="What about you?" owner />
-                      <MessageItem message="I'm fine too!" owner={false} />
-                      <MessageItem message="Thank you!" owner />
+                      {Array.isArray(conversationCreateData?.data?.message) &&
+                        conversationCreateData?.data?.message.map(
+                          (message: any, index: number) => (
+                            <MessageItem
+                              key={index}
+                              message={message.text}
+                              owner={message.userId === user?._id}
+                            />
+                          )
+                        )}
                     </div>
                   </div>
                 </div>
@@ -172,6 +98,7 @@ export default function ChatPage() {
                   <div className="flex-grow ml-4">
                     <div className="relative w-full">
                       <input
+                        ref={inputRef}
                         type="text"
                         className="flex w-full h-10 pl-4 border rounded-xl focus:outline-none focus:border-blue-300"
                       />

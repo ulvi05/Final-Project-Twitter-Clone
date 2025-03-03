@@ -216,7 +216,7 @@ const ProfilePage = () => {
     refetch,
     isRefetching,
   } = useQuery({
-    queryKey: [QUERY_KEYS.USER_PROFILE],
+    queryKey: [QUERY_KEYS.USER_PROFILE, username],
     queryFn: () => usersService.UserProfile(username),
   });
   console.log("Fetched user data:", user);

@@ -1,6 +1,7 @@
 import { DefaultEventsMap, Socket } from "socket.io";
 import Message from "../mongoose/schema/message";
 import User from "../mongoose/schema/user";
+import Conversation from "../mongoose/schema/conversation";
 
 export function SocketHandlers(
   socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
@@ -36,20 +37,31 @@ async function onMessage(
       return socket.emit("error", "Authentication required");
     }
 
+    const sender = await User.findById(from).select("fullName");
+    if (!sender) return socket.emit("error", "User not found");
+
     const socketId = socketUsers[to];
 
-    const user = await User.findById(from);
+    const conversation = await Conversation.findOne({
+      $or: [
+        { userId: from, recipientId: to },
+        { userId: to, recipientId: from },
+      ],
+    });
+
+    if (!conversation) return;
 
     const messageItem = await Message.create({
       text: message,
       userId: from,
+      username: sender.fullName,
+      conversation: conversation._id,
     });
+    conversation.messages.push(messageItem._id);
+    await conversation.save();
 
     if (socketId) {
-      socket.to(socketId).emit("message", {
-        message,
-        from: socket.data.user.id,
-      });
+      socket.to(socketId).emit("message", messageItem);
     } else {
       console.log("User not found");
     }

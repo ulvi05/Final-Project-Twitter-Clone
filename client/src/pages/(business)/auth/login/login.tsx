@@ -16,7 +16,6 @@ import {
   selectUserData,
 } from "@/store/features/userSlice";
 import { useEffect } from "react";
-import { GoogleLogin } from "@react-oauth/google";
 import GoogleIcon from "@/assets/icons/google-icon.png";
 
 const loginSchema = z.object({
@@ -135,7 +134,7 @@ const Login = () => {
         </form>
         <div className="mt-4">
           <button
-            className="w-[300px] mb-2 mt-2 flex mx-auto  justify-center items-center gap-2  p-2 cursor-pointer border border-solid rounded-3xl  border-inherit font-bold"
+            className="rounded-full btn w-[239px]"
             onClick={() => {
               window.location.href = `${
                 import.meta.env.VITE_APP_API_BASE_URL

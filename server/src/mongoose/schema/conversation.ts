@@ -7,6 +7,11 @@ const conversationSchema = new mongoose.Schema({
     ref: "User",
     required: true,
   },
+  recipientId: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
   messages: [
     {
       type: Schema.Types.ObjectId,
@@ -16,13 +21,6 @@ const conversationSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now,
-  },
-});
-
-conversationSchema.set("toJSON", {
-  virtuals: true,
-  transform: (doc, ret) => {
-    delete ret.__v;
   },
 });
 

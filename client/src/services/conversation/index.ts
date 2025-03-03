@@ -1,5 +1,9 @@
 import axiosInstance from "../axiosInstance";
-import { GetUserConversationsType } from "./types";
+import { GetAllConversationsType, GetUserConversationsType } from "./types";
+
+const getAllConversations = async () => {
+  return await axiosInstance.get<GetAllConversationsType>("/conversation");
+};
 
 const getConversation = async ({ userId }: { userId: string }) => {
   return await axiosInstance.get<GetUserConversationsType>(
@@ -7,17 +11,14 @@ const getConversation = async ({ userId }: { userId: string }) => {
   );
 };
 
-const createConversation = async (data: {
-  userEmail: string;
-  username: string;
-  userId: string;
-}) => {
+const createConversation = async (data: { recipientId: string }) => {
   return await axiosInstance.post("/conversation", data);
 };
 
 const conversationService = {
   getConversation,
   createConversation,
+  getAllConversations,
 };
 
 export default conversationService;
