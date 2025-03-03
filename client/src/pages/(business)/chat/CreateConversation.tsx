@@ -17,6 +17,10 @@ export const CreateConversation = () => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.USER_CONVERSATION],
       });
+      setIsModalOpen(false);
+    },
+    onError: () => {
+      setIsModalOpen(false);
     },
   });
 
@@ -24,9 +28,7 @@ export const CreateConversation = () => {
     if (!user) return;
 
     mutate({
-      userEmail: user.email,
-      username: user.fullName,
-      userId: selectedUserId,
+      recipientId: selectedUserId,
     });
   }
 
