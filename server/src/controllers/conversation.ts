@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import mongoose from "mongoose";
 import Conversation from "../mongoose/schema/conversation";
 
 const getAll = async (req: Request, res: Response) => {

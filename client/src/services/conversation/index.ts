@@ -6,9 +6,10 @@ const getAllConversations = async () => {
 };
 
 const getConversation = async ({ userId }: { userId: string }) => {
-  return await axiosInstance.get<GetUserConversationsType>(
+  const response = await axiosInstance.get<GetUserConversationsType>(
     `/conversation/${userId}`
   );
+  return response.data;
 };
 
 const createConversation = async (data: { recipientId: string }) => {

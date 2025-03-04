@@ -63,9 +63,9 @@ export default function ChatPage() {
                 <div className="flex flex-col h-full mb-4 overflow-x-auto">
                   <div className="flex flex-col h-full">
                     <div className="grid grid-cols-12 gap-y-2 max-h-[640px]">
-                      {Array.isArray(conversationCreateData?.data?.message) &&
-                        conversationCreateData?.data?.message.map(
-                          (message: any, index: number) => (
+                      {Array.isArray(conversationCreateData?.items?.messages) &&
+                        conversationCreateData?.items?.messages.map(
+                          (message: string | any, index: number) => (
                             <MessageItem
                               key={index}
                               message={message.text}
