@@ -13,14 +13,20 @@ export const CreateConversation = () => {
 
   const { mutate, isPending } = useMutation({
     mutationFn: conversationService.create,
-    onSuccess: () => {
+    onSuccess: (newConversation) => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.USER_CONVERSATION],
       });
-      setIsModalOpen(false);
-    },
-    onError: () => {
-      setIsModalOpen(false);
+
+      queryClient.setQueryData(
+        [QUERY_KEYS.USER_CONVERSATION, { userId: user?._id }],
+        (oldData: any) => {
+          return {
+            ...oldData,
+            item: [...oldData?.item, newConversation],
+          };
+        }
+      );
     },
   });
 

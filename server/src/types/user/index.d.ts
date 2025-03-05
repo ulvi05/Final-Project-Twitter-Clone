@@ -9,6 +9,10 @@ export interface IUser {
   role: "admin" | "user";
   followers: Types.ObjectId[];
   following: Types.ObjectId[];
+  profileImage?: string;
+  coverImage?: string;
+  bio?: string;
+  link?: string;
   resetPasswordToken?: string;
   resetPasswordTokenExpires?: Date;
 }

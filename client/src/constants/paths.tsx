@@ -3,7 +3,10 @@ export const paths = {
   SIGNUP: "/signup",
   LOGIN: "/login",
   EXPLORE: "/explore",
-  CHAT: "/chat",
+  CHAT: {
+    VIEW: "/chat",
+    USER: (id = ":id") => `/chat/${id}`,
+  },
   PROFILE: (username = ":username") => `/profile/${username}`,
   NOTIFICATION: "/notifications",
   SUBSCRIBE: "/subscribe",

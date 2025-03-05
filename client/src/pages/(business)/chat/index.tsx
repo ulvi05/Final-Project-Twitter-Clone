@@ -1,5 +1,4 @@
 import LoadingSpinner from "@/components/common/LoadingSpinner";
-import { RenderIf } from "@/components/common/RenderIf";
 import { QUERY_KEYS } from "@/constants/query-keys";
 import { useAppSelector } from "@/hooks/main";
 import { useSocket } from "@/hooks/use-socket";
@@ -11,6 +10,7 @@ import { useEffect, useRef, useState } from "react";
 import { CreateConversation } from "./CreateConversation";
 import Sidebar from "./components/Sidebar";
 import { useParams } from "react-router-dom";
+import { ChatInput } from "./components/ChatInput";
 
 export default function ChatPage() {
   const { id } = useParams();
@@ -44,6 +44,7 @@ export default function ChatPage() {
     if (!socket) return;
     socket.on("message", (message) => {
       console.log("message: ", message);
+      setMessages((prev) => [...prev, message]);
     });
   }, [socket]);
 
@@ -51,7 +52,7 @@ export default function ChatPage() {
     if (!socket) return;
     e.preventDefault();
     const message = inputRef.current?.value.trim();
-    const to = chatData?.data?.items?.recipientId;
+    const to = chatData?.data?.item?.recipientId;
     const from = user?._id;
     if (!message || !to || !from) return;
     inputRef.current!.value = "";
@@ -69,135 +70,69 @@ export default function ChatPage() {
 
   useEffect(() => {
     if (status === "success" && chatData) {
-      setMessages(chatData?.data?.items.messages || []);
+      setMessages(
+        chatData?.data?.item.messages.map((msg) => ({
+          ...msg,
+          createdAt: new Date(msg.createdAt).toISOString(),
+        }))
+      );
     }
-  }, [status]);
+  }, [chatData, status]);
 
   console.log("conversationCreateData: ", conversationCreateData);
+  console.log("id:", id);
   console.log("chatData: ", chatData);
 
   return (
     <div className="flex min-h-screen antialiased text-gray-800">
-      <Sidebar onSelectConversation={setUserId} />
+      <Sidebar
+        onSelectConversation={(selectedUserId) => setUserId(selectedUserId)}
+      />
       <div className="flex w-full h-full overflow-x-hidden">
-        <RenderIf condition={conversationCreateLoading || isChatLoading}>
+        {/* Yükleniyor göstergesi */}
+        {conversationCreateLoading || isChatLoading ? (
           <div className="flex items-center justify-center w-full h-full translate-y-40">
             <LoadingSpinner />
           </div>
-        </RenderIf>
-        <RenderIf condition={!conversationCreateLoading}>
-          <RenderIf condition={!conversationCreateData}>
-            <div className="flex items-center justify-center w-full h-screen">
-              <CreateConversation />
-            </div>
-          </RenderIf>
-          <RenderIf condition={conversationCreateLoading || isChatLoading}>
-            <div className="flex items-center justify-center w-full h-full translate-y-40">
-              <LoadingSpinner />
-            </div>
-          </RenderIf>
-          <RenderIf
-            condition={!!conversationCreateData && !conversationCreateLoading}
-          >
-            <div className="flex flex-col flex-auto h-screen p-6 border-r border-gray-700">
-              <div className="flex flex-col flex-1 h-full p-4 text-white bg-black rounded-2xl">
-                <div className="flex flex-col h-full mb-4 overflow-x-auto">
-                  <div className="flex flex-col h-full">
-                    <div className="grid grid-cols-12 gap-y-2 max-h-[640px]">
-                      {messages?.length > 0 ? (
-                        messages.map((message, idx) => (
-                          <MessageItem
-                            key={idx}
-                            message={message.text}
-                            owner={message.userId === user?._id}
-                          />
-                        ))
-                      ) : (
-                        <div className="flex items-center justify-center col-span-12 text-gray-400">
-                          No messages
-                        </div>
-                      )}
+        ) : !conversationCreateData && !id ? (
+          <div className="flex items-center justify-center w-full h-screen">
+            <CreateConversation />
+          </div>
+        ) : (
+          <div className="flex flex-col flex-auto h-screen p-6 border-r border-gray-700">
+            <div className="flex flex-col flex-1 h-full p-4 text-white bg-black rounded-2xl">
+              {id ? (
+                <>
+                  <div className="flex flex-col h-full mb-4 overflow-x-auto">
+                    <div className="flex flex-col h-full">
+                      <div className="grid grid-cols-12 gap-y-2 max-h-[640px]">
+                        {messages?.length > 0 ? (
+                          messages.map((message, idx) => (
+                            <MessageItem
+                              key={idx}
+                              message={message.text}
+                              owner={message.userId === user?._id}
+                            />
+                          ))
+                        ) : (
+                          <div className="flex items-center justify-center col-span-12 text-gray-400">
+                            No messages
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
+                  {/* Burada ChatInput bileşenini çağırıyoruz */}
+                  <ChatInput inputRef={inputRef} handleSubmit={handleSubmit} />
+                </>
+              ) : (
+                <div className="flex items-center justify-center w-full h-screen">
+                  <CreateConversation />
                 </div>
-                <div className="flex flex-row items-center w-full h-16 px-4 bg-[#202327] rounded-xl">
-                  <div>
-                    <button className="flex items-center justify-center text-gray-400 hover:text-gray-600">
-                      <svg
-                        className="w-5 h-5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"
-                        ></path>
-                      </svg>
-                    </button>
-                  </div>
-                  <div className="flex-grow ml-4">
-                    <form
-                      id="chat-form"
-                      onSubmit={handleSubmit}
-                      className="relative w-full"
-                    >
-                      <input
-                        ref={inputRef}
-                        type="text"
-                        className="flex w-full h-10 pl-4 border rounded-xl focus:outline-none focus:border-blue-300"
-                      />
-                      <button className="absolute top-0 right-0 flex items-center justify-center w-12 h-full text-gray-400 hover:text-gray-500">
-                        <svg
-                          className="w-6 h-6"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                          ></path>
-                        </svg>
-                      </button>
-                    </form>
-                  </div>
-                  <div className="ml-4">
-                    <button
-                      type="submit"
-                      form="chat-form"
-                      className="flex items-center justify-center flex-shrink-0 px-4 py-1 text-white bg-blue-500 hover:bg-blue-600 rounded-xl"
-                    >
-                      <span>Send</span>
-                      <span className="ml-2">
-                        <svg
-                          className="w-4 h-4 -mt-px transform rotate-45"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
-                          ></path>
-                        </svg>
-                      </span>
-                    </button>
-                  </div>
-                </div>
-              </div>
+              )}
             </div>
-          </RenderIf>
-        </RenderIf>
+          </div>
+        )}
       </div>
     </div>
   );
