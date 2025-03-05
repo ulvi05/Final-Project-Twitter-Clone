@@ -1,26 +1,24 @@
-import { ActiveConversationSkeleton } from "@/components/skeletons/ActiveConversationSkeleton";
-import { RenderIf } from "@/components/common/RenderIf";
-import { QUERY_KEYS } from "@/constants/query-keys";
 import { useQuery } from "@tanstack/react-query";
+import { QUERY_KEYS } from "@/constants/query-keys";
 import conversationService from "@/services/conversation";
-import { useParams } from "react-router-dom";
+import { RenderIf } from "@/components/common/RenderIf";
+import { ActiveConversationSkeleton } from "@/components/skeletons/ActiveConversationSkeleton";
+import { Link } from "react-router-dom";
+import { paths } from "@/constants/paths";
 
 export default function Sidebar({
   onSelectConversation,
 }: {
   onSelectConversation: (userId: string, chatMessages: any[]) => void;
 }) {
-  const { id } = useParams();
-  console.log("Conversation ID:", id);
-
   const { data: conversationData, isLoading: conversationsLoading } = useQuery({
     queryKey: [QUERY_KEYS.USER_CONVERSATION],
     queryFn: () => conversationService.getAll(),
   });
 
-  console.log("conversationData: ", conversationData);
+  console.log("Fetched Conversations:", conversationData);
 
-  const conversations = conversationData?.data?.items || [];
+  const conversations = conversationData?.data?.conversations || [];
 
   return (
     <div className="flex flex-col w-64 py-8 pl-2 pr-2.5 bg-black border-r border-gray-700 flex-shrink-0">
@@ -53,20 +51,28 @@ export default function Sidebar({
         <RenderIf condition={conversationsLoading}>
           <ActiveConversationSkeleton />
         </RenderIf>
-        <RenderIf condition={!conversationsLoading}>
+        <RenderIf
+          condition={!conversationsLoading && conversations.length === 0}
+        >
+          <div className="mt-4 text-sm text-center text-gray-400">
+            No conversations found. Start a new one!
+          </div>
+        </RenderIf>
+        <RenderIf condition={!conversationsLoading && conversations.length > 0}>
           <div className="flex flex-col mt-4 -mx-2 space-y-1 overflow-y-auto h-52">
             {conversations.map((conversation: any) => (
-              <button
+              <Link
+                to={paths.CHAT.USER(conversation._id)}
                 key={conversation._id}
                 className="flex flex-row items-center p-2 hover:bg-[#1D1F23] rounded-xl"
                 onClick={() =>
-                  onSelectConversation(conversation.id, conversation.messages)
+                  onSelectConversation(conversation._id, conversation.messages)
                 }
               >
                 <div className="flex items-center justify-center w-8 h-8 bg-indigo-200 rounded-full">
                   <img
                     src={
-                      conversation.recipientId.profileImage ||
+                      conversation.recipient?.profileImage ||
                       "/avatar-placeholder.png"
                     }
                     alt="profile"
@@ -74,9 +80,9 @@ export default function Sidebar({
                   />
                 </div>
                 <div className="ml-2 text-sm font-semibold text-white">
-                  {conversation.recipientId.username}
+                  {conversation.recipient?.username || "User"}
                 </div>
-              </button>
+              </Link>
             ))}
           </div>
         </RenderIf>

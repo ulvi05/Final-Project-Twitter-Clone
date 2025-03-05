@@ -1,11 +1,11 @@
 import { Conversation } from "@/types/Conversation";
 
 export type GetConversationsType = {
-  items: Conversation;
+  item: Conversation;
   message: string;
 };
 
 export type GetAllConversationsType = {
-  items: Conversation[];
+  conversations: Conversation[];
   message: string;
 };

@@ -52,7 +52,11 @@ const router = createBrowserRouter([
             element: <SubscribePage />,
           },
           {
-            path: paths.CHAT,
+            path: paths.CHAT.VIEW,
+            element: <ChatPage />,
+          },
+          {
+            path: paths.CHAT.USER(),
             element: <ChatPage />,
           },
           {

@@ -1,20 +1,41 @@
 import { Request, Response } from "express";
 import Conversation from "../mongoose/schema/conversation";
+import User from "../mongoose/schema/user";
+import { IUser } from "../types/user";
 
 const getAll = async (req: Request, res: Response) => {
   try {
-    const conversations = await Conversation.find()
-      .populate("userId", "username email profileImage")
-      .populate("recipientId", "username email profileImage")
+    const userId = req.user?._id;
+
+    const conversations = await Conversation.find({
+      $or: [{ userId: userId }, { recipientId: userId }],
+    })
+      .populate<{ userId: IUser }>("userId", "username profileImage")
+      .populate<{ recipientId: IUser }>("recipientId", "username profileImage")
       .populate("messages");
 
-    res.status(200).json({
-      message: "Conversations fetched successfully",
-      items: conversations,
+    const formattedConversations = conversations.map((conversation) => {
+      const isUserSender =
+        conversation.userId._id.toString() === userId?.toString();
+      const otherUser: IUser = isUserSender
+        ? (conversation.recipientId as IUser)
+        : (conversation.userId as IUser);
+
+      return {
+        _id: conversation._id,
+        recipient: {
+          _id: otherUser._id,
+          username: otherUser.username,
+          profileImage: otherUser.profileImage || "",
+        },
+        messages: conversation.messages,
+      };
     });
+
+    res.status(200).json({ conversations: formattedConversations });
   } catch (error) {
     console.error("Error fetching conversations:", error);
-    res.status(500).send("Internal Server Error");
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
