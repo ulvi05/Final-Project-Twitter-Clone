@@ -12,7 +12,7 @@ export const CreateConversation = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { mutate, isPending } = useMutation({
-    mutationFn: conversationService.createConversation,
+    mutationFn: conversationService.create,
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.USER_CONVERSATION],

@@ -4,8 +4,8 @@ import Conversation from "../mongoose/schema/conversation";
 const getAll = async (req: Request, res: Response) => {
   try {
     const conversations = await Conversation.find()
-      .populate("userId", "username email")
-      .populate("recipientId", "username email")
+      .populate("userId", "username email profileImage")
+      .populate("recipientId", "username email profileImage")
       .populate("messages");
 
     res.status(200).json({
@@ -18,7 +18,7 @@ const getAll = async (req: Request, res: Response) => {
   }
 };
 
-const getUserConversation = async (req: Request, res: Response) => {
+const getByUserId = async (req: Request, res: Response) => {
   try {
     if (!req.isAuthenticated() || !req.user) {
       res.status(401).json({ message: "Authentication required" });
@@ -28,8 +28,8 @@ const getUserConversation = async (req: Request, res: Response) => {
     const conversations = await Conversation.find({
       $or: [{ userId: req.user._id }, { recipientId: req.user._id }],
     })
-      .populate("userId", "username email")
-      .populate("recipientId", "username email")
+      .populate("userId", "username email profileImage")
+      .populate("recipientId", "username email profileImage")
       .populate("messages");
 
     if (!conversations || conversations.length === 0) {
@@ -43,6 +43,29 @@ const getUserConversation = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error("Error fetching user conversation:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+const getById = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const conversation = await Conversation.findById(id)
+      .populate("userId", "username email profileImage")
+      .populate("recipientId", "username email profileImage")
+      .populate("messages");
+
+    if (!conversation) {
+      res.status(404).json({ message: "Conversation not found" });
+      return;
+    }
+
+    res.status(200).json({
+      message: "Conversation fetched successfully",
+      item: conversation,
+    });
+  } catch (error) {
+    console.error("Error fetching conversation by id:", error);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
@@ -103,5 +126,6 @@ const create = async (req: Request, res: Response) => {
 export default {
   getAll,
   create,
-  getUserConversation,
+  getByUserId,
+  getById,
 };

@@ -3,16 +3,22 @@ import { RenderIf } from "@/components/common/RenderIf";
 import { QUERY_KEYS } from "@/constants/query-keys";
 import { useQuery } from "@tanstack/react-query";
 import conversationService from "@/services/conversation";
+import { useParams } from "react-router-dom";
 
 export default function Sidebar({
   onSelectConversation,
 }: {
-  onSelectConversation: (userId: string) => void;
+  onSelectConversation: (userId: string, chatMessages: any[]) => void;
 }) {
+  const { id } = useParams();
+  console.log("Conversation ID:", id);
+
   const { data: conversationData, isLoading: conversationsLoading } = useQuery({
     queryKey: [QUERY_KEYS.USER_CONVERSATION],
-    queryFn: () => conversationService.getAllConversations(),
+    queryFn: () => conversationService.getAll(),
   });
+
+  console.log("conversationData: ", conversationData);
 
   const conversations = conversationData?.data?.items || [];
 
@@ -51,12 +57,21 @@ export default function Sidebar({
           <div className="flex flex-col mt-4 -mx-2 space-y-1 overflow-y-auto h-52">
             {conversations.map((conversation: any) => (
               <button
-                key={conversation.id}
+                key={conversation._id}
                 className="flex flex-row items-center p-2 hover:bg-[#1D1F23] rounded-xl"
-                onClick={() => onSelectConversation(conversation.userId)}
+                onClick={() =>
+                  onSelectConversation(conversation.id, conversation.messages)
+                }
               >
                 <div className="flex items-center justify-center w-8 h-8 bg-indigo-200 rounded-full">
-                  {conversation.recipientId.username[0]}
+                  <img
+                    src={
+                      conversation.recipientId.profileImage ||
+                      "/avatar-placeholder.png"
+                    }
+                    alt="profile"
+                    className="w-full h-full rounded-full"
+                  />
                 </div>
                 <div className="ml-2 text-sm font-semibold text-white">
                   {conversation.recipientId.username}
