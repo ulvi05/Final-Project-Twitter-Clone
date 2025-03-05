@@ -1,6 +1,6 @@
 import { Conversation } from "@/types/Conversation";
 
-export type GetUserConversationsType = {
+export type GetConversationsType = {
   items: Conversation;
   message: string;
 };

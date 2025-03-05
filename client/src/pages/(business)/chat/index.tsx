@@ -10,8 +10,11 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { CreateConversation } from "./CreateConversation";
 import Sidebar from "./components/Sidebar";
+import { useParams } from "react-router-dom";
 
 export default function ChatPage() {
+  const { id } = useParams();
+
   const socket = useSocket();
   const { user } = useAppSelector(selectUserData);
   const [userId, setUserId] = useState("");
@@ -19,27 +22,65 @@ export default function ChatPage() {
 
   const { data: conversationCreateData, isLoading: conversationCreateLoading } =
     useQuery({
-      queryKey: [QUERY_KEYS.USER_CONVERSATION, userId],
-      queryFn: () => conversationService.getConversation({ userId }),
+      queryKey: [QUERY_KEYS.USER_CONVERSATION, { userId }],
+      queryFn: () => conversationService.getByUserId({ userId }),
       enabled: !!userId,
     });
+
+  const {
+    data: chatData,
+    isLoading: isChatLoading,
+    status,
+  } = useQuery({
+    queryKey: [QUERY_KEYS.USER_CHAT, { id }],
+    queryFn: () => conversationService.getById({ id: id! }),
+    enabled: !!id,
+  });
+  const [messages, setMessages] = useState<
+    { text: string; userId: string; createdAt: string }[]
+  >([]);
 
   useEffect(() => {
     if (!socket) return;
     socket.on("message", (message) => {
-      console.log(message);
+      console.log("message: ", message);
     });
-
-    return () => {
-      socket.off("message");
-    };
   }, [socket]);
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    if (!socket) return;
+    e.preventDefault();
+    const message = inputRef.current?.value.trim();
+    const to = chatData?.data?.items?.recipientId;
+    const from = user?._id;
+    if (!message || !to || !from) return;
+    inputRef.current!.value = "";
+
+    socket.emit("message", {
+      message,
+      to,
+      from,
+    });
+    setMessages((prev) => [
+      ...prev,
+      { text: message, userId: from, createdAt: new Date().toISOString() },
+    ]);
+  };
+
+  useEffect(() => {
+    if (status === "success" && chatData) {
+      setMessages(chatData?.data?.items.messages || []);
+    }
+  }, [status]);
+
+  console.log("conversationCreateData: ", conversationCreateData);
+  console.log("chatData: ", chatData);
 
   return (
     <div className="flex min-h-screen antialiased text-gray-800">
       <Sidebar onSelectConversation={setUserId} />
       <div className="flex w-full h-full overflow-x-hidden">
-        <RenderIf condition={conversationCreateLoading}>
+        <RenderIf condition={conversationCreateLoading || isChatLoading}>
           <div className="flex items-center justify-center w-full h-full translate-y-40">
             <LoadingSpinner />
           </div>
@@ -50,7 +91,7 @@ export default function ChatPage() {
               <CreateConversation />
             </div>
           </RenderIf>
-          <RenderIf condition={conversationCreateLoading}>
+          <RenderIf condition={conversationCreateLoading || isChatLoading}>
             <div className="flex items-center justify-center w-full h-full translate-y-40">
               <LoadingSpinner />
             </div>
@@ -63,16 +104,19 @@ export default function ChatPage() {
                 <div className="flex flex-col h-full mb-4 overflow-x-auto">
                   <div className="flex flex-col h-full">
                     <div className="grid grid-cols-12 gap-y-2 max-h-[640px]">
-                      {Array.isArray(conversationCreateData?.items?.messages) &&
-                        conversationCreateData?.items?.messages.map(
-                          (message: string | any, index: number) => (
-                            <MessageItem
-                              key={index}
-                              message={message.text}
-                              owner={message.userId === user?._id}
-                            />
-                          )
-                        )}
+                      {messages?.length > 0 ? (
+                        messages.map((message, idx) => (
+                          <MessageItem
+                            key={idx}
+                            message={message.text}
+                            owner={message.userId === user?._id}
+                          />
+                        ))
+                      ) : (
+                        <div className="flex items-center justify-center col-span-12 text-gray-400">
+                          No messages
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -96,7 +140,11 @@ export default function ChatPage() {
                     </button>
                   </div>
                   <div className="flex-grow ml-4">
-                    <div className="relative w-full">
+                    <form
+                      id="chat-form"
+                      onSubmit={handleSubmit}
+                      className="relative w-full"
+                    >
                       <input
                         ref={inputRef}
                         type="text"
@@ -118,10 +166,14 @@ export default function ChatPage() {
                           ></path>
                         </svg>
                       </button>
-                    </div>
+                    </form>
                   </div>
                   <div className="ml-4">
-                    <button className="flex items-center justify-center flex-shrink-0 px-4 py-1 text-white bg-blue-500 hover:bg-blue-600 rounded-xl">
+                    <button
+                      type="submit"
+                      form="chat-form"
+                      className="flex items-center justify-center flex-shrink-0 px-4 py-1 text-white bg-blue-500 hover:bg-blue-600 rounded-xl"
+                    >
                       <span>Send</span>
                       <span className="ml-2">
                         <svg
