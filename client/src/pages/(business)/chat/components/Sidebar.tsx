@@ -16,8 +16,6 @@ export default function Sidebar({
     queryFn: () => conversationService.getAll(),
   });
 
-  console.log("Fetched Conversations:", conversationData);
-
   const conversations = conversationData?.data?.conversations || [];
 
   return (

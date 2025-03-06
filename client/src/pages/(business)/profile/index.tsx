@@ -219,7 +219,6 @@ const ProfilePage = () => {
     queryKey: [QUERY_KEYS.USER_PROFILE, username],
     queryFn: () => usersService.UserProfile(username),
   });
-  console.log("Fetched user data:", user);
 
   const { updateProfile, updatingProfile } = useUpdateUserProfile();
 

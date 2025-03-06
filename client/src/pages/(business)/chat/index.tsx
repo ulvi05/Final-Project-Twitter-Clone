@@ -19,6 +19,7 @@ export default function ChatPage() {
   const { user } = useAppSelector(selectUserData);
   const [userId, setUserId] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
 
   const { data: conversationCreateData, isLoading: conversationCreateLoading } =
     useQuery({
@@ -32,7 +33,7 @@ export default function ChatPage() {
     isLoading: isChatLoading,
     status,
   } = useQuery({
-    queryKey: [QUERY_KEYS.USER_CHAT, { id }],
+    queryKey: [QUERY_KEYS.USER_CHAT, id],
     queryFn: () => conversationService.getById({ id: id! }),
     enabled: !!id,
   });
@@ -42,7 +43,10 @@ export default function ChatPage() {
 
   useEffect(() => {
     if (!socket) return;
+    console.log("socket", socket);
     socket.on("message", (message) => {
+      if (message.conversation !== window.location.pathname.split("/").pop())
+        return;
       console.log("message: ", message);
       setMessages((prev) => [...prev, message]);
     });
@@ -77,11 +81,19 @@ export default function ChatPage() {
         }))
       );
     }
-  }, [chatData, status]);
+  }, [chatData]);
+  console.log("Chat Data:", chatData);
+  console.log("Recipient:", chatData?.data?.item?.recipientId);
 
-  console.log("conversationCreateData: ", conversationCreateData);
-  console.log("id:", id);
-  console.log("chatData: ", chatData);
+  useEffect(() => {
+    if (wrapperRef.current) {
+      console.log(wrapperRef.current.scrollHeight);
+      wrapperRef.current.scrollTo({
+        top: wrapperRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }
+  }, [messages]);
 
   return (
     <div className="flex min-h-screen antialiased text-gray-800">
@@ -89,7 +101,6 @@ export default function ChatPage() {
         onSelectConversation={(selectedUserId) => setUserId(selectedUserId)}
       />
       <div className="flex w-full h-full overflow-x-hidden">
-        {/* Yükleniyor göstergesi */}
         {conversationCreateLoading || isChatLoading ? (
           <div className="flex items-center justify-center w-full h-full translate-y-40">
             <LoadingSpinner />
@@ -103,7 +114,10 @@ export default function ChatPage() {
             <div className="flex flex-col flex-1 h-full p-4 text-white bg-black rounded-2xl">
               {id ? (
                 <>
-                  <div className="flex flex-col h-full mb-4 overflow-x-auto">
+                  <div
+                    ref={wrapperRef}
+                    className="flex flex-col h-full mb-4 overflow-x-auto"
+                  >
                     <div className="flex flex-col h-full">
                       <div className="grid grid-cols-12 gap-y-2 max-h-[640px]">
                         {messages?.length > 0 ? (
@@ -122,7 +136,6 @@ export default function ChatPage() {
                       </div>
                     </div>
                   </div>
-                  {/* Burada ChatInput bileşenini çağırıyoruz */}
                   <ChatInput inputRef={inputRef} handleSubmit={handleSubmit} />
                 </>
               ) : (

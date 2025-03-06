@@ -3,49 +3,53 @@ import Message from "../mongoose/schema/message";
 import User from "../mongoose/schema/user";
 import Conversation from "../mongoose/schema/conversation";
 
+const socketUsers: Record<string, string> = {};
 export function SocketHandlers(
   socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, any>
 ) {
-  const socketUsers: Record<string, string> = {};
-
   socket.on("register", (userId: string) => {
-    onRegister(userId, socket, socketUsers);
+    onRegister(userId, socket);
   });
 
   socket.on("message", (data: { message: string; to: string; from: string }) =>
-    onMessage(data, socket, socketUsers)
+    onMessage(data, socket)
   );
 
-  socket.on("disconnect", () => onDisconnect(socket, socketUsers));
+  socket.on("disconnect", () => onDisconnect(socket));
 }
 
-function onRegister(
-  userId: string,
-  socket: Socket,
-  socketUsers: Record<string, string>
-) {
+function onRegister(userId: string, socket: Socket) {
   socketUsers[userId] = socket.id;
+  console.log("a user connected", userId, socket.id);
+  console.log("socketUsers", socketUsers);
 }
 
 async function onMessage(
   { message, to, from }: { message: string; to: string; from: string },
-  socket: Socket,
-  socketUsers: Record<string, string>
+  socket: Socket
 ) {
   try {
-    if (!socket.data.user) {
-      return socket.emit("error", "Authentication required");
-    }
-
     const sender = await User.findById(from).select("fullName");
     if (!sender) return socket.emit("error", "User not found");
 
-    const socketId = socketUsers[to];
+    console.log(
+      `💬 Mesaj gəldi: ${message}, Göndərən: ${from}, Qəbul edən: ${to}`
+    );
+
+    const recipientId = to.toString();
+    console.log("🎯 Qəbul edənin socketId-si:", socketUsers[recipientId]);
+
+    if (!socketUsers[recipientId]) {
+      console.log(
+        `❌ Mesaj getmədi, çünki ${recipientId} socketUsers-də yoxdur.`
+      );
+      return;
+    }
 
     const conversation = await Conversation.findOne({
       $or: [
-        { userId: from, recipientId: to },
-        { userId: to, recipientId: from },
+        { userId: from, recipientId: recipientId },
+        { userId: recipientId, recipientId: from },
       ],
     });
 
@@ -57,20 +61,22 @@ async function onMessage(
       username: sender.fullName,
       conversation: conversation._id,
     });
+
     conversation.messages.push(messageItem._id);
     await conversation.save();
 
+    const socketId = socketUsers[recipientId]; // <-- Düzgün şəkildə socketId alırıq
+
     if (socketId) {
       socket.to(socketId).emit("message", messageItem);
-    } else {
-      console.log("User not found");
+      console.log(`✅ Mesaj uğurla ${recipientId} istifadəçisinə göndərildi.`);
     }
   } catch (error) {
     console.log(error);
   }
 }
 
-function onDisconnect(socket: Socket, socketUsers: Record<string, string>) {
+function onDisconnect(socket: Socket) {
   console.log("user disconnected", socket.id);
   Object.entries(socketUsers).forEach((item) => {
     if (item[1] === socket.id) {

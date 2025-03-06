@@ -55,7 +55,6 @@ const Login = () => {
   const { mutate, isPending } = useMutation({
     mutationFn: authService.login,
     onSuccess: (response) => {
-      console.log("Login successful, navigating to home...");
       toast.success(response.data.message);
       dispatch(getCurrentUserAsync());
       reset();
@@ -69,11 +68,8 @@ const Login = () => {
   });
 
   const onSubmit = (data: LoginFormData) => {
-    console.log("Form data:", data);
     mutate(data);
   };
-
-  console.log("Google Client ID:", import.meta.env.VITE_APP_GOOGLE_CLIENT_ID);
 
   return (
     <div className="flex h-screen max-w-screen-xl mx-auto">

@@ -28,7 +28,6 @@ export default function CreateConversationModal({
     };
 
     if (isOpen) fetchFollowedUsers();
-    console.log("Modal open state:", isOpen);
   }, [isOpen]);
 
   useEffect(() => {
