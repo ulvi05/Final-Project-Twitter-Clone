@@ -54,7 +54,7 @@ app.use(
     },
   })
 );
-app.use("/public", express.static(path.join(__dirname, "public")));
+app.use("/public", express.static(path.join(__dirname, "../public")));
 app.use(passport.initialize());
 app.use(passport.session());
 

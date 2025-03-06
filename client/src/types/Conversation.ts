@@ -4,7 +4,12 @@ export type Conversation = {
   _id: string;
   userId: string;
   username: string;
-  recipientId: string;
+  recipientId: {
+    _id: string;
+    username: string;
+    email: string;
+    profileImage?: string;
+  };
   messages: Message[];
   createdAt: Date;
 };

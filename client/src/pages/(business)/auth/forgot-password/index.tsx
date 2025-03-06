@@ -65,7 +65,7 @@ const ForgotPassword = () => {
               <input
                 type="email"
                 className="bg-transparent grow focus:outline-none"
-                placeholder="E-posta"
+                placeholder="Email"
                 {...form.register("email")}
               />
             </div>

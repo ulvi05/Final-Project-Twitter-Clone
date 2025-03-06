@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import Conversation from "../mongoose/schema/conversation";
 import User from "../mongoose/schema/user";
 import { IUser } from "../types/user";
+import Message from "../mongoose/schema/message";
 
 const getAll = async (req: Request, res: Response) => {
   try {

@@ -40,8 +40,6 @@ const CreatePost: React.FC = () => {
     e.preventDefault();
     const file = imgRef.current?.files?.[0] || null;
 
-    console.log("Data sent:", { text, media: file });
-
     createPost({
       text,
       media: file,
