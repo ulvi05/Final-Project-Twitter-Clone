@@ -19,6 +19,7 @@ export function SocketHandlers(
 }
 
 function onRegister(userId: string, socket: Socket) {
+  console.log(socketUsers, "SOCKETUSER");
   socketUsers[userId] = socket.id;
   console.log("a user connected", userId, socket.id);
   console.log("socketUsers", socketUsers);
@@ -37,6 +38,7 @@ async function onMessage(
     );
 
     const recipientId = to.toString();
+    console.log(recipientId);
     console.log("🎯 Qəbul edənin socketId-si:", socketUsers[recipientId]);
 
     if (!socketUsers[recipientId]) {
@@ -65,7 +67,7 @@ async function onMessage(
     conversation.messages.push(messageItem._id);
     await conversation.save();
 
-    const socketId = socketUsers[recipientId]; // <-- Düzgün şəkildə socketId alırıq
+    const socketId = socketUsers[recipientId];
 
     if (socketId) {
       socket.to(socketId).emit("message", messageItem);
