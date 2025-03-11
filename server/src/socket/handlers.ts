@@ -19,7 +19,6 @@ export function SocketHandlers(
 }
 
 function onRegister(userId: string, socket: Socket) {
-  console.log(socketUsers, "SOCKETUSER");
   socketUsers[userId] = socket.id;
   console.log("a user connected", userId, socket.id);
   console.log("socketUsers", socketUsers);
@@ -37,8 +36,7 @@ async function onMessage(
       `💬 Mesaj gəldi: ${message}, Göndərən: ${from}, Qəbul edən: ${to}`
     );
 
-    const recipientId = to.toString();
-    console.log(recipientId);
+    const recipientId = to;
     console.log("🎯 Qəbul edənin socketId-si:", socketUsers[recipientId]);
 
     if (!socketUsers[recipientId]) {
@@ -57,9 +55,14 @@ async function onMessage(
 
     if (!conversation) return;
 
+    const recipient = await User.findById(recipientId).select("username");
+    if (!recipient) return socket.emit("error", "Recipient not found");
+
     const messageItem = await Message.create({
       text: message,
       userId: from,
+      recipientId: to,
+      recipientName: recipient.username,
       username: sender.fullName,
       conversation: conversation._id,
     });
