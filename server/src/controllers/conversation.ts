@@ -78,8 +78,6 @@ const getById = async (req: Request, res: Response) => {
       .populate("recipientId", "username email profileImage")
       .populate("messages");
 
-    console.log(conversation, "CONVERSIONS");
-
     if (!conversation) {
       res.status(404).json({ message: "Conversation not found" });
       return;

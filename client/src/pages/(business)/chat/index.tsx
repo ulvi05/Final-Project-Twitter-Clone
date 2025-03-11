@@ -56,8 +56,16 @@ export default function ChatPage() {
     if (!socket) return;
     e.preventDefault();
     const message = inputRef.current?.value.trim();
-    const to = chatData?.data?.item?.recipientId._id;
+    const to =
+      chatData?.data?.item?.recipientId._id !== user?._id
+        ? chatData?.data?.item?.recipientId?._id
+        : chatData?.data?.item?.userId?._id;
+
     const from = user?._id;
+
+    console.log("Message From:", from);
+    console.log("Message To:", to);
+
     if (!message || !to || !from) return;
     inputRef.current!.value = "";
 
