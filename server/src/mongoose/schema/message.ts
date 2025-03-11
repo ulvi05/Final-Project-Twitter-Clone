@@ -12,6 +12,11 @@ const messageSchema = new Schema(
       ref: "User",
       required: true,
     },
+    recipientId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     username: {
       type: String,
       required: true,

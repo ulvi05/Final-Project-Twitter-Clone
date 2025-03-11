@@ -56,7 +56,7 @@ export default function ChatPage() {
     if (!socket) return;
     e.preventDefault();
     const message = inputRef.current?.value.trim();
-    const to = chatData?.data?.item?.recipientId;
+    const to = chatData?.data?.item?.recipientId._id;
     const from = user?._id;
     if (!message || !to || !from) return;
     inputRef.current!.value = "";
@@ -65,10 +65,16 @@ export default function ChatPage() {
       message,
       to,
       from,
+      conversation: chatData?.data?.item._id,
     });
     setMessages((prev) => [
       ...prev,
-      { text: message, userId: from, createdAt: new Date().toISOString() },
+      {
+        text: message,
+        userId: from,
+        recipientId: to,
+        createdAt: new Date().toISOString(),
+      },
     ]);
   };
 
@@ -83,11 +89,10 @@ export default function ChatPage() {
     }
   }, [chatData]);
   console.log("Chat Data:", chatData);
-  console.log("Recipient:", chatData?.data?.item?.recipientId);
+  console.log("Recipient:", chatData?.data?.item?.recipientId?._id);
 
   useEffect(() => {
     if (wrapperRef.current) {
-      console.log(wrapperRef.current.scrollHeight);
       wrapperRef.current.scrollTo({
         top: wrapperRef.current.scrollHeight,
         behavior: "smooth",
