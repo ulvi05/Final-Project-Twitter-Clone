@@ -5,11 +5,14 @@ import { RenderIf } from "@/components/common/RenderIf";
 import { ActiveConversationSkeleton } from "@/components/skeletons/ActiveConversationSkeleton";
 import { Link } from "react-router-dom";
 import { paths } from "@/constants/paths";
+import { cn } from "@/utils";
 
 export default function Sidebar({
   onSelectConversation,
+  isOpen,
 }: {
   onSelectConversation: (userId: string, chatMessages: any[]) => void;
+  isOpen: boolean;
 }) {
   const { data: conversationData, isLoading: conversationsLoading } = useQuery({
     queryKey: [QUERY_KEYS.USER_CONVERSATION],
@@ -19,7 +22,14 @@ export default function Sidebar({
   const conversations = conversationData?.data?.conversations || [];
 
   return (
-    <div className="flex flex-col w-64 py-8 pl-2 pr-2.5 bg-black border-r border-gray-700 flex-shrink-0">
+    <div
+      className={cn(
+        "flex flex-col w-64 py-8 pl-2 pr-2.5 bg-black border-r border-gray-700 flex-shrink-0",
+        "fixed md:relative inset-y-0 left-0 z-40",
+        "transform transition-transform duration-300 ease-in-out",
+        isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+      )}
+    >
       <div className="flex flex-row items-center justify-center w-full h-12">
         <div className="flex items-center justify-center w-10 h-10 text-black bg-indigo-100 rounded-2xl">
           <svg

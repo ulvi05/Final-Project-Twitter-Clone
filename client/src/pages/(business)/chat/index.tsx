@@ -11,8 +11,11 @@ import { CreateConversation } from "./CreateConversation";
 import Sidebar from "./components/Sidebar";
 import { useParams } from "react-router-dom";
 import { ChatInput } from "./components/ChatInput";
+import { IoCloseOutline } from "react-icons/io5";
+import { FiSidebar } from "react-icons/fi";
 
 export default function ChatPage() {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { id } = useParams();
 
   const socket = useSocket();
@@ -20,6 +23,10 @@ export default function ChatPage() {
   const [userId, setUserId] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
 
   const { data: conversationCreateData, isLoading: conversationCreateLoading } =
     useQuery({
@@ -43,11 +50,9 @@ export default function ChatPage() {
 
   useEffect(() => {
     if (!socket) return;
-    console.log("socket", socket);
     socket.on("message", (message) => {
       if (message.conversation !== window.location.pathname.split("/").pop())
         return;
-      console.log("message: ", message);
       setMessages((prev) => [...prev, message]);
     });
   }, [socket]);
@@ -62,9 +67,6 @@ export default function ChatPage() {
         : chatData?.data?.item?.userId?._id;
 
     const from = user?._id;
-
-    console.log("Message From:", from);
-    console.log("Message To:", to);
 
     if (!message || !to || !from) return;
     inputRef.current!.value = "";
@@ -96,8 +98,6 @@ export default function ChatPage() {
       );
     }
   }, [chatData]);
-  console.log("Chat Data:", chatData);
-  console.log("Recipient:", chatData?.data?.item?.recipientId?._id);
 
   useEffect(() => {
     if (wrapperRef.current) {
@@ -109,11 +109,30 @@ export default function ChatPage() {
   }, [messages]);
 
   return (
-    <div className="flex min-h-screen antialiased text-gray-800">
+    <div className="relative flex min-h-screen antialiased text-gray-800">
+      <button
+        onClick={toggleSidebar}
+        className={cn(
+          "fixed z-50 p-2 text-white bg-black rounded-lg top-2 md:hidden",
+          isSidebarOpen ? "left-0" : "left-[5rem]"
+        )}
+      >
+        {isSidebarOpen ? (
+          <IoCloseOutline className="w-5 h-5" />
+        ) : (
+          <FiSidebar className="w-5 h-5" />
+        )}
+      </button>
       <Sidebar
+        isOpen={isSidebarOpen}
         onSelectConversation={(selectedUserId) => setUserId(selectedUserId)}
       />
-      <div className="flex w-full h-full overflow-x-hidden">
+      <div
+        className={cn(
+          "flex w-full h-full overflow-x-hidden",
+          isSidebarOpen ? "overflow-hidden md:overflow-auto" : "overflow-auto"
+        )}
+      >
         {conversationCreateLoading || isChatLoading ? (
           <div className="flex items-center justify-center w-full h-full translate-y-40">
             <LoadingSpinner />
@@ -132,7 +151,7 @@ export default function ChatPage() {
                     className="flex flex-col h-full mb-4 overflow-x-auto"
                   >
                     <div className="flex flex-col h-full">
-                      <div className="grid grid-cols-12 gap-y-2 max-h-[640px]">
+                      <div className="grid grid-cols-12 gap-y-2 max-h-[calc(100vh-200px)] md:max-h-[640px]">
                         {messages?.length > 0 ? (
                           messages.map((message, idx) => (
                             <MessageItem
@@ -174,7 +193,7 @@ const MessageItem = ({
   return (
     <div
       className={cn(
-        " p-3 rounded-lg",
+        "p-3 rounded-lg",
         owner ? "col-start-6 col-end-13" : "col-start-1 col-end-8"
       )}
     >
@@ -184,13 +203,14 @@ const MessageItem = ({
           owner && "justify-start flex-row-reverse"
         )}
       >
-        <div className="flex items-center justify-center flex-shrink-0 w-10 h-10 bg-indigo-500 rounded-full">
+        <div className="flex items-center justify-center flex-shrink-0 w-8 h-8 bg-indigo-500 rounded-full md:w-10 md:h-10">
           A
         </div>
         <div
           className={cn(
             "relative px-4 py-2 text-sm shadow rounded-xl",
-            owner ? "bg-blue-500 mr-3" : "bg-[#2f3336] ml-3"
+            owner ? "bg-blue-500 mr-3" : "bg-[#2f3336] ml-3",
+            "max-w-[80%] md:max-w-[60%]"
           )}
         >
           <div>{message}</div>

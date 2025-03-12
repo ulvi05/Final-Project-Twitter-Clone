@@ -8,6 +8,7 @@ import { useMutation } from "@tanstack/react-query";
 import postService from "@/services/posts";
 import { QUERY_KEYS } from "@/constants/query-keys";
 import queryClient from "@/config/queryClient";
+import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
 
 type FileInputEvent = React.ChangeEvent<HTMLInputElement>;
 
@@ -15,6 +16,7 @@ const CreatePost: React.FC = () => {
   const [text, setText] = useState<string>("");
   const [media, setMedia] = useState<string | null>(null);
   const [mediaType, setMediaType] = useState<"image" | "video" | null>(null);
+  const [showEmojiPicker, setShowEmojiPicker] = useState<boolean>(false);
   const imgRef = useRef<HTMLInputElement | null>(null);
 
   const { user } = useAppSelector(selectUserData);
@@ -82,6 +84,11 @@ const CreatePost: React.FC = () => {
     }
   };
 
+  const handleEmojiClick = (emojiData: EmojiClickData) => {
+    setText((prevText) => prevText + emojiData.emoji);
+    setShowEmojiPicker(false);
+  };
+
   return (
     <div className="flex items-start gap-4 p-4 border-b border-gray-700">
       <div className="avatar">
@@ -118,12 +125,23 @@ const CreatePost: React.FC = () => {
         )}
 
         <div className="flex justify-between py-2 border-t border-t-gray-700">
-          <div className="flex items-center gap-1">
+          <div className="relative flex items-center gap-1">
             <CiImageOn
               className="w-6 h-6 cursor-pointer fill-primary"
               onClick={() => imgRef.current?.click()}
             />
-            <FaRegSmile className="w-5 h-5 cursor-pointer fill-primary" />
+            <FaRegSmile
+              className="w-5 h-5 cursor-pointer fill-primary"
+              onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+            />
+            {showEmojiPicker && (
+              <div className="absolute left-0 z-10 transform translate-y-2 top-10">
+                <EmojiPicker
+                  previewConfig={{ showPreview: false }}
+                  onEmojiClick={handleEmojiClick}
+                />
+              </div>
+            )}
           </div>
           <input
             type="file"

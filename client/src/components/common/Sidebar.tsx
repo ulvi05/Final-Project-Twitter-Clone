@@ -1,5 +1,4 @@
 import XSvg from "@/components/svgs/X";
-
 import { MdHomeFilled } from "react-icons/md";
 import { IoNotifications, IoSearch } from "react-icons/io5";
 import { FaUser } from "react-icons/fa";
@@ -30,11 +29,12 @@ const Sidebar = () => {
   };
 
   return (
-    <div className="md:flex-[2_2_0] w-18 max-w-5xl">
-      <div className="sticky top-0 left-0 flex flex-col w-20 h-screen pl-2 pr-2 border-r border-gray-700 md:w-full">
+    <div className="flex-shrink-0 w-20 md:w-64">
+      <div className="sticky top-0 left-0 flex flex-col h-screen pl-2 pr-2 border-r border-gray-700">
         <Link to="/" className="flex justify-center md:justify-start">
           <XSvg className="w-12 h-12 px-2 rounded-full fill-white hover:bg-stone-900" />
         </Link>
+
         <ul className="flex flex-col gap-3 mt-4">
           <li className="flex items-center justify-center cursor-pointer group md:justify-start">
             <Link
@@ -123,4 +123,5 @@ const Sidebar = () => {
     </div>
   );
 };
+
 export default Sidebar;
