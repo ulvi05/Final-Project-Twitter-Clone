@@ -43,7 +43,6 @@ const createPost = async (req: Request, res: Response) => {
       video: videoUrl,
     });
 
-    console.log("New Post Data: ", newPost);
     await newPost.save();
 
     res.status(201).json(newPost);

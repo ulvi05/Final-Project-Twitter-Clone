@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import { FormEvent, RefObject, useState } from "react";
 import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
 import "@/styles/chatInput.css";
 
 interface ChatInputProps {
-  inputRef: React.RefObject<HTMLInputElement>;
-  handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  inputRef: RefObject<HTMLInputElement>;
+  handleSubmit: (e: FormEvent<HTMLFormElement>) => void;
 }
 
 export const ChatInput = ({ inputRef, handleSubmit }: ChatInputProps) => {

@@ -1,6 +1,8 @@
+import { ReactNode } from "react";
+
 type Props = {
   condition: boolean;
-  children: React.ReactNode;
+  children: ReactNode;
 };
 
 export const RenderIf = ({ children, condition }: Props) => {

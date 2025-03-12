@@ -15,6 +15,7 @@ import authRoutes from "./routes/auth";
 import userRoutes from "./routes/users";
 import postRoutes from "./routes/posts";
 import conversationRoutes from "./routes/conversation";
+import geminiRoutes from "./routes/gemini";
 
 import "./auth/local-strategy";
 import "./auth/google";
@@ -63,6 +64,7 @@ app.use("/users", userRoutes);
 app.use("/posts", postRoutes);
 app.use("/notifications", notificationRoutes);
 app.use("/conversation", conversationRoutes);
+app.use("/gemini", geminiRoutes);
 
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
