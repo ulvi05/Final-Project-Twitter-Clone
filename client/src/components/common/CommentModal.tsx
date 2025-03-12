@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, FormEvent } from "react";
 import { useMutation } from "@tanstack/react-query";
 import queryClient from "@/config/queryClient";
 import { QUERY_KEYS } from "@/constants/query-keys";
@@ -58,7 +58,7 @@ const CommentModal = ({ post }: { post: PostType }) => {
     },
   });
 
-  const handlePostComment = (e: React.FormEvent<HTMLFormElement>) => {
+  const handlePostComment = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (isCommenting) return;
     commentPost({ postId: post._id, text: comment });

@@ -6,7 +6,7 @@ import conversationService from "@/services/conversation";
 import { selectUserData } from "@/store/features/userSlice";
 import { cn } from "@/utils";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { CreateConversation } from "./CreateConversation";
 import Sidebar from "./components/Sidebar";
 import { useParams } from "react-router-dom";
@@ -57,7 +57,7 @@ export default function ChatPage() {
     });
   }, [socket]);
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     if (!socket) return;
     e.preventDefault();
     const message = inputRef.current?.value.trim();

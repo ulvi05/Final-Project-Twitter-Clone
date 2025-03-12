@@ -1,5 +1,5 @@
 import { CiImageOn } from "react-icons/ci";
-import { useRef, useState } from "react";
+import { ChangeEvent, FormEvent, useRef, useState } from "react";
 import { IoCloseSharp } from "react-icons/io5";
 import { FaRegSmile } from "react-icons/fa";
 import { useAppSelector } from "@/hooks/main";
@@ -10,9 +10,9 @@ import { QUERY_KEYS } from "@/constants/query-keys";
 import queryClient from "@/config/queryClient";
 import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
 
-type FileInputEvent = React.ChangeEvent<HTMLInputElement>;
+type FileInputEvent = ChangeEvent<HTMLInputElement>;
 
-const CreatePost: React.FC = () => {
+const CreatePost = () => {
   const [text, setText] = useState<string>("");
   const [media, setMedia] = useState<string | null>(null);
   const [mediaType, setMediaType] = useState<"image" | "video" | null>(null);
@@ -38,7 +38,7 @@ const CreatePost: React.FC = () => {
     },
   });
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const file = imgRef.current?.files?.[0] || null;
 
@@ -137,6 +137,8 @@ const CreatePost: React.FC = () => {
             {showEmojiPicker && (
               <div className="absolute left-0 z-10 transform translate-y-2 top-10">
                 <EmojiPicker
+                  className="!h-72"
+                  searchDisabled
                   previewConfig={{ showPreview: false }}
                   onEmojiClick={handleEmojiClick}
                 />

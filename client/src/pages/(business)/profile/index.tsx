@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { ChangeEvent, RefObject, useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { QUERY_KEYS } from "@/constants/query-keys";
@@ -25,8 +25,8 @@ type CoverImageProps = {
   coverImg: string | null;
   defaultImg: string;
   onEditClick: () => void;
-  inputRef: React.RefObject<HTMLInputElement>;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  inputRef: RefObject<HTMLInputElement>;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   isMyProfile: boolean;
 };
 
@@ -34,8 +34,8 @@ type ProfileImageProps = {
   profileImg: string | null;
   defaultImg: string;
   onEditClick: () => void;
-  inputRef: React.RefObject<HTMLInputElement>;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  inputRef: RefObject<HTMLInputElement>;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   isMyProfile: boolean;
 };
 

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, ChangeEvent, FormEvent } from "react";
 import useUpdateUserProfile from "@/hooks/useUpdateUserProfile";
 
 import { User } from "@/types/User";
@@ -19,7 +19,7 @@ const EditProfileModal = ({ currentUser }: { currentUser: User }) => {
   const { updateProfile, updatingProfile } = useUpdateUserProfile();
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -45,7 +45,7 @@ const EditProfileModal = ({ currentUser }: { currentUser: User }) => {
   const closeModal = () => {
     modalRef.current?.close();
   };
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     updateProfile(formData, {
       onSuccess: () => closeModal(),

@@ -72,7 +72,7 @@ const PostOne = ({ post }: { post: PostType }) => {
         <div className="avatar">
           <Link
             to={`/profile/${postOwner.username}`}
-            className="w-8 overflow-hidden rounded-full"
+            className="w-8 h-8 overflow-hidden rounded-full"
           >
             <img
               src={postOwner.profileImage || "/avatar-placeholder.png"}
