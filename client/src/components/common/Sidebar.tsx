@@ -5,7 +5,7 @@ import { FaUser } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { BiLogOut } from "react-icons/bi";
 import { IoMdMail } from "react-icons/io";
-import { PiOpenAiLogoBold } from "react-icons/pi";
+import { RiGeminiFill } from "react-icons/ri";
 import { useAppDispatch, useAppSelector } from "@/hooks/main";
 import { logoutAsync, selectUserData } from "@/store/features/userSlice";
 import { toast } from "sonner";
@@ -74,11 +74,11 @@ const Sidebar = () => {
           </li>
           <li className="flex items-center justify-center cursor-pointer group md:justify-start">
             <Link
-              to="/chatgpt"
+              to="/gemini"
               className="flex items-center gap-3 py-2 pl-2 pr-4 transition-all duration-300 rounded-full cursor-pointer max-w-fit group-hover:bg-stone-900"
             >
-              <PiOpenAiLogoBold className="w-6 h-6" />
-              <span className="hidden text-xl md:block">ChatGPT</span>
+              <RiGeminiFill className="w-6 h-6" />
+              <span className="hidden text-xl md:block">Gemini</span>
             </Link>
           </li>
           <li className="flex items-center justify-center cursor-pointer group md:justify-start">

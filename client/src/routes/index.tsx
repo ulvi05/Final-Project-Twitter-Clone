@@ -11,7 +11,7 @@ import NotificationPage from "@/pages/(business)/notification";
 import AuthGuard from "@/components/AuthLayout";
 import SubscribePage from "@/pages/(business)/premium";
 import ChatPage from "@/pages/(business)/chat";
-import ChatGPTPage from "@/pages/(business)/chatgpt";
+import GeminiPage from "@/pages/(business)/gemini";
 import SimpleLayout from "@/components/SimpleLayout";
 import ForgotPassword from "@/pages/(business)/auth/forgot-password";
 import ResetPassword from "@/pages/(business)/auth/reset-password";
@@ -60,8 +60,8 @@ const router = createBrowserRouter([
             element: <ChatPage />,
           },
           {
-            path: paths.CHATGPT,
-            element: <ChatGPTPage />,
+            path: paths.GEMINI,
+            element: <GeminiPage />,
           },
         ],
       },
