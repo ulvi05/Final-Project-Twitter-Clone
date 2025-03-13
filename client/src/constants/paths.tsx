@@ -10,7 +10,7 @@ export const paths = {
   PROFILE: (username = ":username") => `/profile/${username}`,
   NOTIFICATION: "/notifications",
   SUBSCRIBE: "/subscribe",
-  CHATGPT: "/chatgpt",
+  GEMINI: "/gemini",
   FORGOT_PASSWORD: "/forgot-password",
   RESET_PASSWORD: (token = ":token") => `/reset-password/${token}`,
 };
