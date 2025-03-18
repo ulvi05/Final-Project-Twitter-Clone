@@ -108,6 +108,14 @@ export default function ChatPage() {
     }
   }, [messages]);
 
+  const getProfileImage = (messageUserId: string) => {
+    if (messageUserId === user?._id) return user?.profileImage;
+
+    return chatData?.data?.item?.recipientId?._id === messageUserId
+      ? chatData?.data?.item?.recipientId?.profileImage
+      : chatData?.data?.item?.userId?.profileImage;
+  };
+
   return (
     <div className="relative flex min-h-screen antialiased text-gray-800">
       <button
@@ -158,6 +166,9 @@ export default function ChatPage() {
                               key={idx}
                               message={message.text}
                               owner={message.userId === user?._id}
+                              user={{
+                                profileImage: getProfileImage(message.userId),
+                              }}
                             />
                           ))
                         ) : (
@@ -186,9 +197,11 @@ export default function ChatPage() {
 const MessageItem = ({
   message,
   owner,
+  user,
 }: {
   message: string;
   owner: boolean;
+  user: { profileImage?: string };
 }) => {
   return (
     <div
@@ -203,9 +216,17 @@ const MessageItem = ({
           owner && "justify-start flex-row-reverse"
         )}
       >
-        <div className="flex items-center justify-center flex-shrink-0 w-8 h-8 bg-indigo-500 rounded-full md:w-10 md:h-10">
-          A
-        </div>
+        {user?.profileImage ? (
+          <img
+            src={user.profileImage}
+            alt="User Avatar"
+            className="w-8 h-8 rounded-full md:w-10 md:h-10"
+          />
+        ) : (
+          <div className="flex items-center justify-center flex-shrink-0 w-8 h-8 bg-indigo-500 rounded-full md:w-10 md:h-10">
+            User
+          </div>
+        )}
         <div
           className={cn(
             "relative px-4 py-2 text-sm shadow rounded-xl",
