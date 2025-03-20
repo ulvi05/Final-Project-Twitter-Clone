@@ -26,6 +26,10 @@ const messageSchema = new Schema(
       ref: "Conversation",
       required: true,
     },
+    isRead: {
+      type: Boolean,
+      default: false,
+    }
   },
   { timestamps: true }
 );

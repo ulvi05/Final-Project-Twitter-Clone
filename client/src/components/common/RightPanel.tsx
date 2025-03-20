@@ -52,45 +52,47 @@ const RightPanel = () => {
             </p>
           )}
           {!isLoading &&
-            (suggestedUsers as unknown as User[])?.map((user: User) => (
-              <Link
-                to={`/profile/${user.username}`}
-                className="flex items-center justify-between gap-4 hover:bg-[#1D1F23] p-2 rounded-lg transition-colors"
-                key={user._id}
-              >
-                <div className="flex items-center gap-3">
-                  <div className="avatar">
-                    <div className="w-10 h-10 overflow-hidden border border-gray-600 rounded-full">
-                      <img
-                        src={user.profileImage || "/avatar-placeholder.png"}
-                        alt={`${user.fullName}'s avatar`}
-                        className="object-cover"
-                      />
+            (suggestedUsers as unknown as User[])
+              ?.slice(0, 3)
+              .map((user: User) => (
+                <Link
+                  to={`/profile/${user.username}`}
+                  className="flex items-center justify-between gap-4 hover:bg-[#1D1F23] p-2 rounded-lg transition-colors"
+                  key={user._id}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="avatar">
+                      <div className="w-10 h-10 overflow-hidden border border-gray-600 rounded-full">
+                        <img
+                          src={user.profileImage || "/avatar-placeholder.png"}
+                          alt={`${user.fullName}'s avatar`}
+                          className="object-cover"
+                        />
+                      </div>
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="font-semibold text-white truncate w-28">
+                        {user.fullName}
+                      </span>
+                      <span className="text-sm text-gray-400">
+                        @{user.username}
+                      </span>
                     </div>
                   </div>
-                  <div className="flex flex-col">
-                    <span className="font-semibold text-white truncate w-28">
-                      {user.fullName}
-                    </span>
-                    <span className="text-sm text-gray-400">
-                      @{user.username}
-                    </span>
+                  <div>
+                    <button
+                      className="px-4 py-1 text-sm font-medium text-black transition-all bg-white rounded-full hover:bg-gray-200 disabled:opacity-50"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        follow(user._id);
+                      }}
+                      disabled={isPending}
+                    >
+                      {isPending ? <LoadingSpinner size="sm" /> : "Follow"}
+                    </button>
                   </div>
-                </div>
-                <div>
-                  <button
-                    className="px-4 py-1 text-sm font-medium text-black transition-all bg-white rounded-full hover:bg-gray-200 disabled:opacity-50"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      follow(user._id);
-                    }}
-                    disabled={isPending}
-                  >
-                    {isPending ? <LoadingSpinner size="sm" /> : "Follow"}
-                  </button>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              ))}
         </div>
         {!isLoading && (
           <div className="mt-4">
@@ -105,20 +107,31 @@ const RightPanel = () => {
       </div>
 
       <div className="flex flex-wrap justify-center gap-3 mt-4 text-xs text-gray-500">
-        <Link to="/terms" className="hover:underline">
+        <Link to="#" className="hover:underline">
           Terms of Service
         </Link>
-        <Link to="/privacy" className="hover:underline">
+        <Link to="#" className="hover:underline">
           Privacy Policy
         </Link>
-        <Link to="/cookies" className="hover:underline">
+        <Link to="#" className="hover:underline">
           Cookie Policy
         </Link>
-        <Link to="/accessibility" className="hover:underline">
+        <Link to="#" className="hover:underline">
           Accessibility
         </Link>
       </div>
-      <p className="mt-1 text-xs text-center">© 2025 X Corp.</p>
+
+      <div className="mt-4 text-center">
+        <Link
+          to="https://github.com/ulvi05"
+          className="block text-xs text-gray-400 transition hover:text-white"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Crafted with ❤️ by Ulvi Aghazade
+        </Link>
+        <p className="mt-1 text-xs text-gray-500">© 2025 X Corp.</p>
+      </div>
     </div>
   );
 };

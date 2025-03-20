@@ -81,7 +81,7 @@ const getSuggestedUsers = async (req: Request, res: Response) => {
           _id: { $ne: userId },
         },
       },
-      { $sample: { size: 10 } },
+      { $sample: { size: 20 } },
       { $project: { password: 0 } },
     ]);
 

@@ -1,7 +1,6 @@
 import { useState } from "react";
 
 import Posts from "@/components/common/Posts";
-// import CreatePost from "./CreatePost";
 
 const ExplorePage = () => {
   const [feedType, setFeedType] = useState<"forYou" | "following">("forYou");
@@ -31,8 +30,6 @@ const ExplorePage = () => {
             )}
           </div>
         </div>
-
-        {/* <CreatePost /> */}
 
         <Posts feedType={feedType} />
       </div>

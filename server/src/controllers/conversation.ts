@@ -15,23 +15,32 @@ const getAll = async (req: Request, res: Response) => {
       .populate<{ recipientId: IUser }>("recipientId", "username profileImage")
       .populate("messages");
 
-    const formattedConversations = conversations.map((conversation) => {
-      const isUserSender =
-        conversation.userId._id.toString() === userId?.toString();
-      const otherUser: IUser = isUserSender
-        ? (conversation.recipientId as IUser)
-        : (conversation.userId as IUser);
+    const formattedConversations = await Promise.all(
+      conversations.map(async (conversation) => {
+        const isUserSender =
+          conversation.userId._id.toString() === userId?.toString();
+        const otherUser: IUser = isUserSender
+          ? (conversation.recipientId as IUser)
+          : (conversation.userId as IUser);
 
-      return {
-        _id: conversation._id,
-        recipient: {
-          _id: otherUser._id,
-          username: otherUser.username,
-          profileImage: otherUser.profileImage || "",
-        },
-        messages: conversation.messages,
-      };
-    });
+        const unreadCount = await Message.countDocuments({
+          conversation: conversation._id,
+          recipientId: userId,
+          isRead: false,
+        });
+
+        return {
+          _id: conversation._id,
+          recipient: {
+            _id: otherUser._id,
+            username: otherUser.username,
+            profileImage: otherUser.profileImage || "",
+          },
+          messages: conversation.messages,
+          unreadCount,
+        };
+      })
+    );
 
     res.status(200).json({ conversations: formattedConversations });
   } catch (error) {
@@ -72,16 +81,25 @@ const getByUserId = async (req: Request, res: Response) => {
 const getById = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
+    const userId = req.user?._id;
 
     const conversation = await Conversation.findById(id)
       .populate("userId", "username email profileImage")
       .populate("recipientId", "username email profileImage")
-      .populate("messages");
+      .populate({
+        path: "messages",
+        options: { sort: { createdAt: 1 } },
+      });
 
     if (!conversation) {
       res.status(404).json({ message: "Conversation not found" });
       return;
     }
+
+    await Message.updateMany(
+      { conversation: id, recipientId: userId, isRead: false },
+      { $set: { isRead: true } }
+    );
 
     res.status(200).json({
       message: "Conversation fetched successfully",

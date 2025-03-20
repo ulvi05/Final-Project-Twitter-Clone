@@ -29,48 +29,31 @@ async function onMessage(
   socket: Socket
 ) {
   try {
-    console.log(`🔵 [onMessage] incoming message data:`, { message, from, to });
+    console.log(`🔵 [onMessage] Incoming message data:`, { message, from, to });
 
     if (from === to) {
-      console.log("❌ Kullanıcı kendisine mesaj göndermeye çalıştı.");
       return socket.emit("error", "You cannot message yourself.");
     }
 
     const sender = await User.findById(from).select("fullName");
-    if (!sender) {
-      console.log("❌ User not found (SENDER , from):", from);
-      return socket.emit("error", "User not found");
-    }
+    if (!sender) return socket.emit("error", "User not found");
 
-    console.log(`💬 Message arrived: ${message}, From: ${from}, To: ${to}`);
-
-    const recipientId = to;
-    console.log("🎯 Receiver's socket ID:", socketUsers[recipientId]);
-
-    if (!socketUsers[recipientId]) {
-      console.log(
-        `❌ The message did not go through because ${recipientId} It is not available in socketUsers.`
-      );
-      return;
-    }
-
-    console.log(`📌 Search conversation:`, { from, recipientId });
-
-    const conversation = await Conversation.findOne({
+    let conversation = await Conversation.findOne({
       $or: [
-        { userId: from, recipientId: recipientId },
-        { userId: recipientId, recipientId: from },
+        { userId: from, recipientId: to },
+        { userId: to, recipientId: from },
       ],
     });
 
     if (!conversation) {
-      console.log("❌ Conversation not found.");
-      return;
+      conversation = await Conversation.create({
+        userId: from,
+        recipientId: to,
+        messages: [],
+      });
     }
 
-    console.log("✅ Conversation found, ID:", conversation._id);
-
-    const recipient = await User.findById(recipientId).select("username");
+    const recipient = await User.findById(to).select("username");
     if (!recipient) return socket.emit("error", "Recipient not found");
 
     const messageItem = await Message.create({
@@ -80,22 +63,30 @@ async function onMessage(
       recipientName: recipient.username,
       username: sender.fullName,
       conversation: conversation._id,
+      isRead: false,
     });
 
     conversation.messages.push(messageItem._id);
     await conversation.save();
 
-    console.log("✅ Message saved:", messageItem);
-
-    const socketId = socketUsers[recipientId];
+    const socketId = socketUsers[to];
 
     if (socketId) {
-      console.log(`📤 Message ${recipientId} user sended...`);
       socket.to(socketId).emit("message", messageItem);
-      console.log(`✅ Message successfully ${recipientId} send to user.`);
+    }
+
+    if (!socketId) {
+      console.log(`📌 User ${to} is offline, message will be stored.`);
+    } else {
+      const unreadCount = await Message.countDocuments({
+        recipientId: to,
+        isRead: false,
+      });
+
+      socket.to(socketId).emit("unreadMessages", { unreadCount });
     }
   } catch (error) {
-    console.log(error);
+    console.error("⚠️ An error occurred:", error);
   }
 }
 

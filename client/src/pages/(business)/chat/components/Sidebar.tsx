@@ -72,7 +72,7 @@ export default function Sidebar({
               <Link
                 to={paths.CHAT.USER(conversation._id)}
                 key={conversation._id}
-                className="flex flex-row items-center p-2 hover:bg-[#1D1F23] rounded-xl"
+                className="flex flex-row items-center p-2 hover:bg-[#1D1F23] rounded-xl relative"
                 onClick={() =>
                   onSelectConversation(conversation._id, conversation.messages)
                 }
@@ -90,6 +90,11 @@ export default function Sidebar({
                 <div className="ml-2 text-sm font-semibold text-white">
                   {conversation.recipient?.username || "User"}
                 </div>
+                {conversation.unreadCount > 0 && (
+                  <span className="absolute px-2 py-1 text-xs font-bold text-white bg-red-500 rounded-full right-2 top-3">
+                    {conversation.unreadCount}
+                  </span>
+                )}
               </Link>
             ))}
           </div>
