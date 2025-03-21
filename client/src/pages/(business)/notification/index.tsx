@@ -31,6 +31,8 @@ const NotificationPage = () => {
     },
   });
 
+  console.log("notifications", notifications);
+
   return (
     <>
       <div className="flex-[4_4_0] border-l border-r border-gray-700 min-h-screen">
@@ -69,12 +71,12 @@ const NotificationPage = () => {
               {notification.type === "like" && (
                 <FaHeart className="text-red-500 w-7 h-7" />
               )}
-              <Link to={`/profile/${notification.from.username}`}>
+              <Link to={`/profile/${notification.from?.username}`}>
                 <div className="avatar">
                   <div className="w-8 rounded-full">
                     <img
                       src={
-                        notification.from.profileImage ||
+                        notification.from?.profileImage ||
                         "/avatar-placeholder.png"
                       }
                     />
@@ -82,7 +84,7 @@ const NotificationPage = () => {
                 </div>
                 <div className="flex gap-1">
                   <span className="font-bold">
-                    @{notification.from.username}
+                    @{notification.from?.username}
                   </span>{" "}
                   {notification.type === "follow"
                     ? "followed you"

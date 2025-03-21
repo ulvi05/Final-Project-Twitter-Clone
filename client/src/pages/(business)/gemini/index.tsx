@@ -71,8 +71,8 @@ const GeminiPage = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-full p-4">
-      <div className="w-full h-[600px] flex flex-col shadow-lg bg-base-100 rounded-lg overflow-hidden">
+    <div className="flex flex-col items-center justify-between h-full p-4">
+      <div className="flex flex-col w-full h-[90vh] overflow-hidden rounded-lg shadow-lg bg-base-100">
         <div className="flex items-center justify-center w-full gap-2 p-4 rounded-md bg-base-200">
           <RiGeminiFill className="text-4xl text-primary" />
           <h2 className="text-2xl font-bold">Gemini</h2>
@@ -87,7 +87,7 @@ const GeminiPage = () => {
                 }`}
               >
                 <div
-                  className={`p-3 rounded-lg max-w-xs text-sm ${
+                  className={`p-3 rounded-lg max-w-xs md:max-w-md lg:max-w-lg text-sm ${
                     message.role === "user"
                       ? "bg-primary text-white"
                       : "bg-base-300 text-base-content"
@@ -111,12 +111,12 @@ const GeminiPage = () => {
               }
             }}
             placeholder="Type your message..."
-            className="flex-1 rounded-md input input-bordered"
+            className="flex-1 w-full rounded-md input input-bordered placeholder:text-xs md:placeholder:text-base placeholder:italic"
           />
           <button
             onClick={handleSendMessage}
             disabled={!userInput.trim() || isSending}
-            className="text-white rounded-sm btn btn-primary"
+            className="text-white rounded-sm btn btn-primary whitespace-nowrap"
           >
             {isSending ? "Sending..." : "Send"}
           </button>
