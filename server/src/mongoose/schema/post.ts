@@ -36,6 +36,12 @@ const postSchema = new Schema(
         },
       },
     ],
+    bookmarks: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
   },
   { timestamps: true }
 );

@@ -4,7 +4,7 @@ import { IoNotifications, IoSearch } from "react-icons/io5";
 import { FaUser } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { BiLogOut } from "react-icons/bi";
-import { IoMdMail } from "react-icons/io";
+import { IoMdBookmark, IoMdMail } from "react-icons/io";
 import { RiGeminiFill } from "react-icons/ri";
 import { useAppDispatch, useAppSelector } from "@/hooks/main";
 import { logoutAsync, selectUserData } from "@/store/features/userSlice";
@@ -61,6 +61,15 @@ const Sidebar = () => {
             >
               <IoNotifications className="w-6 h-6" />
               <span className="hidden text-xl md:block">Notifications</span>
+            </Link>
+          </li>
+          <li className="flex items-center justify-center cursor-pointer group md:justify-start">
+            <Link
+              to="/bookmarks"
+              className="flex items-center gap-3 py-2 pl-2 pr-4 transition-all duration-300 rounded-full cursor-pointer max-w-fit group-hover:bg-stone-900"
+            >
+              <IoMdBookmark className="w-6 h-6" />
+              <span className="hidden text-xl md:block">Bookmarks</span>
             </Link>
           </li>
           <li className="flex items-center justify-center cursor-pointer group md:justify-start">

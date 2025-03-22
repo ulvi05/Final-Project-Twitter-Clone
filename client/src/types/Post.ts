@@ -11,4 +11,5 @@ export type PostType = {
   user: User;
   createdAt: string;
   updatedAt: string;
+  bookmarks: string[];
 };
