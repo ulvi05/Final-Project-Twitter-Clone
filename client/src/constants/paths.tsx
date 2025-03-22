@@ -13,4 +13,5 @@ export const paths = {
   GEMINI: "/gemini",
   FORGOT_PASSWORD: "/forgot-password",
   RESET_PASSWORD: (token = ":token") => `/reset-password/${token}`,
+  BOOKMARKS: "/bookmarks",
 };

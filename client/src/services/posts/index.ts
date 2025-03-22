@@ -66,6 +66,16 @@ const deletePost = async (data: { id: string }) => {
   return await axiosInstance.delete(`/posts/${data.id}`);
 };
 
+const toggleBookmarkPost = async (postId: string) => {
+  const response = await axiosInstance.post(`/posts/${postId}/bookmark`);
+  return response.data;
+};
+
+const getAllBookmarks = async () => {
+  const response = await axiosInstance.get("/posts/bookmarks");
+  return response.data;
+};
+
 const postService = {
   getPosts,
   create,
@@ -73,6 +83,8 @@ const postService = {
   commentPost,
   deleteComments,
   deletePost,
+  toggleBookmarkPost,
+  getAllBookmarks,
 };
 
 export default postService;

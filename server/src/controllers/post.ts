@@ -309,6 +309,54 @@ const getUserPosts = async (req: Request, res: Response) => {
   }
 };
 
+const bookmarkPost = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user?._id as mongoose.Types.ObjectId;
+    const { id: postId } = req.params;
+
+    const post = await Post.findById(postId);
+    if (!post) {
+      res.status(404).json({ message: "Post not found" });
+      return;
+    }
+
+    const userBookmarked = post.bookmarks.includes(userId);
+
+    if (userBookmarked) {
+      await Post.updateOne({ _id: postId }, { $pull: { bookmarks: userId } });
+      res.status(200).json({ message: "Bookmark removed" });
+    } else {
+      post.bookmarks.push(userId);
+      await post.save();
+      res.status(200).json({ message: "Post bookmarked" });
+    }
+  } catch (error) {
+    console.error("Error in bookmarkPost: ", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+const getBookmarkedPosts = async (req: Request, res: Response) => {
+  try {
+    const userId = req.user?._id;
+
+    const posts = await Post.find({ bookmarks: userId })
+      .populate({
+        path: "user",
+        select: "-password",
+      })
+      .populate({
+        path: "comments.user",
+        select: "-password",
+      });
+
+    res.status(200).json(posts);
+  } catch (error) {
+    console.error("Error in getBookmarkedPosts: ", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
 export default {
   createPost,
   deletePost,
@@ -319,4 +367,6 @@ export default {
   getLikedPosts,
   getFollowingPosts,
   getUserPosts,
+  bookmarkPost,
+  getBookmarkedPosts,
 };

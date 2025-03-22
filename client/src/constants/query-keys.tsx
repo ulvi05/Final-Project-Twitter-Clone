@@ -5,4 +5,5 @@ export const QUERY_KEYS = {
   USER_PROFILE: "userProfile",
   USER_CONVERSATION: "userConversation",
   USER_CHAT: "userChat",
+  BOOKMARKS: "bookmarks",
 };

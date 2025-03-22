@@ -15,6 +15,7 @@ import GeminiPage from "@/pages/(business)/gemini";
 import SimpleLayout from "@/components/SimpleLayout";
 import ForgotPassword from "@/pages/(business)/auth/forgot-password";
 import ResetPassword from "@/pages/(business)/auth/reset-password";
+import BookmarksPage from "@/pages/(business)/bookmarks";
 
 const router = createBrowserRouter([
   {
@@ -40,6 +41,10 @@ const router = createBrowserRouter([
           {
             path: paths.NOTIFICATION,
             element: <NotificationPage />,
+          },
+          {
+            path: paths.BOOKMARKS,
+            element: <BookmarksPage />,
           },
         ],
       },

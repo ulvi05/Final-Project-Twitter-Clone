@@ -16,6 +16,7 @@ import LoadingSpinner from "./LoadingSpinner";
 import { QUERY_KEYS } from "@/constants/query-keys";
 import { formatPostDate } from "@/utils/date";
 import queryClient from "@/config/queryClient";
+import { FaBookmark } from "react-icons/fa6";
 
 const PostOne = ({ post }: { post: PostType }) => {
   const { openDialog } = useDialog();
@@ -57,6 +58,17 @@ const PostOne = ({ post }: { post: PostType }) => {
     },
   });
 
+  const { mutate: toggleBookmark, isPending: isBookmarking } = useMutation({
+    mutationFn: postService.toggleBookmarkPost,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.POSTS],
+      });
+    },
+  });
+
+  const isBookmarked = post.bookmarks.includes(user?._id ?? "");
+
   const handleLikePost = () => {
     if (isLiking) return;
     likePost({ postId: post._id });
@@ -64,6 +76,11 @@ const PostOne = ({ post }: { post: PostType }) => {
 
   const handleDeletePost = () => {
     deletePost({ id: post._id });
+  };
+
+  const handleBookmarkPost = () => {
+    if (isBookmarking) return;
+    toggleBookmark(post._id);
   };
 
   return (
@@ -191,8 +208,15 @@ const PostOne = ({ post }: { post: PostType }) => {
             </div>
 
             <div className="flex items-center justify-end w-1/3 gap-2 group">
-              <div className="p-2 transition duration-200 rounded-full cursor-pointer group-hover:bg-blue-900 group-hover:bg-opacity-50">
-                <FaRegBookmark className="w-4 h-4 text-slate-500 group-hover:text-blue-400" />
+              <div
+                className="p-2 transition duration-200 rounded-full cursor-pointer group-hover:bg-blue-900 group-hover:bg-opacity-50"
+                onClick={handleBookmarkPost}
+              >
+                {isBookmarked ? (
+                  <FaBookmark className="w-4 h-4 text-blue-400" />
+                ) : (
+                  <FaRegBookmark className="w-4 h-4 text-slate-500 group-hover:text-blue-400" />
+                )}
               </div>
             </div>
           </div>
