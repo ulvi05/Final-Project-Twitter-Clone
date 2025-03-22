@@ -20,8 +20,6 @@ export function SocketHandlers(
 
 function onRegister(userId: string, socket: Socket) {
   socketUsers[userId] = socket.id;
-  console.log("✅ User Connected:", userId, "Socket ID:", socket.id);
-  console.log("📌 Updated socketUsers list:", socketUsers);
 }
 
 async function onMessage(
@@ -29,8 +27,6 @@ async function onMessage(
   socket: Socket
 ) {
   try {
-    console.log(`🔵 [onMessage] Incoming message data:`, { message, from, to });
-
     if (from === to) {
       return socket.emit("error", "You cannot message yourself.");
     }
@@ -73,16 +69,10 @@ async function onMessage(
 
     if (socketId) {
       socket.to(socketId).emit("message", messageItem);
-    }
-
-    if (!socketId) {
-      console.log(`📌 User ${to} is offline, message will be stored.`);
-    } else {
       const unreadCount = await Message.countDocuments({
         recipientId: to,
         isRead: false,
       });
-
       socket.to(socketId).emit("unreadMessages", { unreadCount });
     }
   } catch (error) {
@@ -91,7 +81,6 @@ async function onMessage(
 }
 
 function onDisconnect(socket: Socket) {
-  console.log("user disconnected", socket.id);
   Object.entries(socketUsers).forEach((item) => {
     if (item[1] === socket.id) {
       delete socketUsers[item[0]];

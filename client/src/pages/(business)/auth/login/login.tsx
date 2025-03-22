@@ -17,6 +17,7 @@ import {
 } from "@/store/features/userSlice";
 import { useEffect } from "react";
 import GoogleIcon from "@/assets/icons/google-icon.png";
+import { Helmet } from "react-helmet-async";
 
 const loginSchema = z.object({
   email: z
@@ -73,6 +74,9 @@ const Login = () => {
 
   return (
     <div className="flex h-screen max-w-screen-xl mx-auto">
+      <Helmet>
+        <title>Log in to X / X</title>
+      </Helmet>
       <div className="items-center justify-center flex-1 hidden lg:flex">
         <XSvg className="lg:w-2/3 fill-white" />
       </div>
