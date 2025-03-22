@@ -8,12 +8,15 @@ import { Toaster } from "sonner";
 import queryClient from "./config/queryClient";
 import { store } from "./store/store";
 import "./styles/index.css";
+import { HelmetProvider } from "react-helmet-async";
 
 createRoot(document.getElementById("root")!).render(
-  <Provider store={store}>
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-      <Toaster richColors />
-    </QueryClientProvider>
-  </Provider>
+  <HelmetProvider>
+    <Provider store={store}>
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
+        <Toaster richColors />
+      </QueryClientProvider>
+    </Provider>
+  </HelmetProvider>
 );

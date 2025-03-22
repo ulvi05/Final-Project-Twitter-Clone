@@ -12,6 +12,7 @@ import authService from "@/services/auth";
 import { AxiosError } from "axios";
 import { AuthResponseType } from "@/services/auth/types";
 import { toast } from "sonner";
+import { Helmet } from "react-helmet-async";
 
 const signUpSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -69,6 +70,9 @@ const SignUp = () => {
 
   return (
     <div className="flex h-screen max-w-screen-xl px-10 mx-auto">
+      <Helmet>
+        <title>X. Here's what happened / X</title>
+      </Helmet>
       <div className="items-center justify-center flex-1 hidden lg:flex">
         <XSvg className=" lg:w-2/3 fill-white" />
       </div>

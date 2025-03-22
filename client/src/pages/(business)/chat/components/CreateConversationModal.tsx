@@ -38,7 +38,7 @@ export default function CreateConversationModal({
   }, [search, followedUsers]);
 
   const handleStartConversation = (userId: string) => {
-    console.log("Conversation started with user:", userId);
+    onStartConversation(userId);
     onClose();
   };
 
@@ -76,7 +76,7 @@ export default function CreateConversationModal({
                 </div>
                 <button
                   className="text-white btn btn-primary btn-sm"
-                  onClick={() => onStartConversation(user._id)}
+                  onClick={() => handleStartConversation(user._id)}
                   disabled={isPending}
                 >
                   {isPending ? "Starting..." : "Start"}
