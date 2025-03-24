@@ -13,11 +13,14 @@ import { toast } from "sonner";
 import { IoIosTrash } from "react-icons/io";
 import { useAppSelector } from "@/hooks/main";
 import { selectUserData } from "@/store/features/userSlice";
+import EmojiPicker, { Theme } from "emoji-picker-react";
+import { MdOutlineEmojiEmotions } from "react-icons/md";
 
 const CommentModal = ({ post }: { post: PostType }) => {
   const { type, isOpen, postId, closeDialog } = useDialog();
   const { user } = useAppSelector(selectUserData);
   const [comment, setComment] = useState("");
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
   useEffect(() => {
     const modal = document.getElementById(
@@ -69,12 +72,17 @@ const CommentModal = ({ post }: { post: PostType }) => {
     deleteComment({ postId: post._id, commentId });
   };
 
+  const addEmoji = (emojiData: { emoji: string }) => {
+    setComment((prev) => prev + emojiData.emoji);
+    setShowEmojiPicker(false);
+  };
+
   return (
     <dialog
       id={`comments_modal${post._id}`}
       className="border-none outline-none modal"
     >
-      <div className="border border-gray-600 modal-box rounded-xl">
+      <div className="p-4 border border-gray-600 modal-box rounded-xl">
         <h3 className="mb-4 text-lg font-bold">COMMENTS</h3>
         <div className="flex flex-col gap-3 overflow-auto max-h-60">
           {post.comments.length === 0 && (
@@ -117,21 +125,41 @@ const CommentModal = ({ post }: { post: PostType }) => {
 
         <form
           onSubmit={handlePostComment}
-          className="flex items-center gap-2 pt-2 mt-4 border-t border-gray-600"
+          className="flex flex-col gap-2 pt-2 mt-4 border-t border-gray-600"
         >
           <textarea
-            className="w-full p-1 border border-gray-800 rounded resize-none textarea text-md focus:outline-none"
+            className="w-full p-2 border border-gray-800 rounded-lg resize-none textarea text-md focus:outline-none"
             placeholder="Add a comment..."
             value={comment}
             onChange={(e) => setComment(e.target.value)}
           />
-          <button
-            type="submit"
-            className="px-4 text-white rounded-full btn btn-primary btn-sm"
-            disabled={isCommenting}
-          >
-            {isCommenting ? <LoadingSpinner size="md" /> : "Post"}
-          </button>
+          <div className="relative flex items-center justify-end gap-2">
+            <button
+              type="button"
+              className="px-2 py-1 rounded-lg"
+              onClick={() => setShowEmojiPicker((prev) => !prev)}
+            >
+              <MdOutlineEmojiEmotions />
+            </button>
+            {showEmojiPicker && (
+              <div className="absolute z-50 bottom-10">
+                <EmojiPicker
+                  className="!h-48"
+                  searchDisabled
+                  previewConfig={{ showPreview: false }}
+                  onEmojiClick={addEmoji}
+                  theme={Theme.DARK}
+                />
+              </div>
+            )}
+            <button
+              type="submit"
+              className="px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700"
+              disabled={isCommenting}
+            >
+              {isCommenting ? <LoadingSpinner size="md" /> : "Post"}
+            </button>
+          </div>
         </form>
       </div>
       <form method="dialog" className="modal-backdrop">

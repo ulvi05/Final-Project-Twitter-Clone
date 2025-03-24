@@ -1,5 +1,5 @@
 import { FormEvent, RefObject, useState } from "react";
-import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
+import EmojiPicker, { EmojiClickData, Theme } from "emoji-picker-react";
 import "@/styles/chatInput.css";
 
 interface ChatInputProps {
@@ -84,6 +84,7 @@ export const ChatInput = ({ inputRef, handleSubmit }: ChatInputProps) => {
           <EmojiPicker
             onEmojiClick={handleEmojiClick}
             previewConfig={{ showPreview: false }}
+            theme={Theme.DARK}
           />
         </div>
       )}
