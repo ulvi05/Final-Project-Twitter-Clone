@@ -8,7 +8,7 @@ import { useMutation } from "@tanstack/react-query";
 import postService from "@/services/posts";
 import { QUERY_KEYS } from "@/constants/query-keys";
 import queryClient from "@/config/queryClient";
-import EmojiPicker, { EmojiClickData } from "emoji-picker-react";
+import EmojiPicker, { EmojiClickData, Theme } from "emoji-picker-react";
 
 type FileInputEvent = ChangeEvent<HTMLInputElement>;
 
@@ -140,6 +140,7 @@ const CreatePost = () => {
                   className="!h-72"
                   searchDisabled
                   previewConfig={{ showPreview: false }}
+                  theme={Theme.DARK}
                   onEmojiClick={handleEmojiClick}
                 />
               </div>
