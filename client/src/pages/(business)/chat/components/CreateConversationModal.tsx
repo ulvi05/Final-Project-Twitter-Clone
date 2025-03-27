@@ -64,7 +64,6 @@ export default function CreateConversationModal({
               <div
                 key={user._id}
                 className="flex items-center justify-between p-2 text-white border-b cursor-pointer hover:bg-gray-100 hover:text-black"
-                onClick={() => handleStartConversation(user._id)}
               >
                 <div className="flex items-center space-x-2">
                   <img
@@ -76,7 +75,10 @@ export default function CreateConversationModal({
                 </div>
                 <button
                   className="text-white btn btn-primary btn-sm"
-                  onClick={() => handleStartConversation(user._id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleStartConversation(user._id);
+                  }}
                   disabled={isPending}
                 >
                   {isPending ? "Starting..." : "Start"}
