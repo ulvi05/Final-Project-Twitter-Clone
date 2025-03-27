@@ -1,11 +1,14 @@
-import { useQuery } from "@tanstack/react-query";
-import { QUERY_KEYS } from "@/constants/query-keys";
+import { ActiveConversationSkeleton } from "@/components/skeletons/ActiveConversationSkeleton";
 import conversationService from "@/services/conversation";
 import { RenderIf } from "@/components/common/RenderIf";
-import { ActiveConversationSkeleton } from "@/components/skeletons/ActiveConversationSkeleton";
-import { Link } from "react-router-dom";
+import { Conversation } from "@/types/Conversation";
+
+import { QUERY_KEYS } from "@/constants/query-keys";
+import { useQuery } from "@tanstack/react-query";
 import { paths } from "@/constants/paths";
+import { Link } from "react-router-dom";
 import { cn } from "@/utils";
+import queryClient from "@/config/queryClient";
 
 export default function Sidebar({
   onSelectConversation,
@@ -20,6 +23,18 @@ export default function Sidebar({
   });
 
   const conversations = conversationData?.data?.conversations || [];
+
+  const handleClick = (conversation: Conversation) => {
+    const updatedConversations = conversations.map((c) =>
+      c._id === conversation._id ? { ...c, unreadCount: 0 } : c
+    );
+
+    queryClient.setQueryData([QUERY_KEYS.USER_CONVERSATION], {
+      data: { conversations: updatedConversations },
+    });
+
+    onSelectConversation(conversation._id, conversation.messages);
+  };
 
   return (
     <div
@@ -68,14 +83,12 @@ export default function Sidebar({
         </RenderIf>
         <RenderIf condition={!conversationsLoading && conversations.length > 0}>
           <div className="flex flex-col mt-4 -mx-2 space-y-1 overflow-y-auto h-52">
-            {conversations.map((conversation: any) => (
+            {conversations.map((conversation: Conversation) => (
               <Link
                 to={paths.CHAT.USER(conversation._id)}
                 key={conversation._id}
                 className="flex flex-row items-center p-2 hover:bg-[#1D1F23] rounded-xl relative"
-                onClick={() =>
-                  onSelectConversation(conversation._id, conversation.messages)
-                }
+                onClick={() => handleClick(conversation)}
               >
                 <div className="flex items-center justify-center w-8 h-8 bg-indigo-200 rounded-full">
                   <img
@@ -91,7 +104,7 @@ export default function Sidebar({
                   {conversation.recipient?.username || "User"}
                 </div>
                 {conversation.unreadCount > 0 && (
-                  <span className="absolute px-2 py-1 text-xs font-bold text-white bg-red-500 rounded-full right-2 top-3">
+                  <span className="absolute px-2 py-1 text-xs text-white bg-red-500 rounded-full right-2">
                     {conversation.unreadCount}
                   </span>
                 )}

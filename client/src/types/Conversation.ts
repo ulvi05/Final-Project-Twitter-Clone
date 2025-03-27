@@ -1,4 +1,4 @@
-import { Message } from "./Message";
+import { Message } from "react-hook-form";
 
 export type Conversation = {
   _id: string;
@@ -16,5 +16,7 @@ export type Conversation = {
     profileImage?: string;
   };
   messages: Message[];
-  createdAt: Date;
+  unreadCount: number;
+  createdAt: Date | string;
+  updatedAt?: Date | string;
 };

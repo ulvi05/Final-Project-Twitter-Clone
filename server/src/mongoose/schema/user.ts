@@ -79,8 +79,19 @@ const userSchema = new Schema(
       },
     ],
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  }
 );
+
+userSchema.virtual("postCount", {
+  ref: "Post",
+  localField: "_id",
+  foreignField: "user",
+  count: true,
+});
 
 userSchema.set("toJSON", {
   virtuals: true,

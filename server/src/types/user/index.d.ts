@@ -15,4 +15,6 @@ export interface IUser {
   link?: string;
   resetPasswordToken?: string;
   resetPasswordTokenExpires?: Date;
+  likedPosts: Types.ObjectId[];
+  postCount?: number;
 }
