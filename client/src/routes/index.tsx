@@ -9,7 +9,6 @@ import LoginPage from "@/pages/(business)/auth/login/login";
 import SignUpPage from "@/pages/(business)/auth/signup/signup";
 import NotificationPage from "@/pages/(business)/notification";
 import AuthGuard from "@/components/AuthLayout";
-import SubscribePage from "@/pages/(business)/premium";
 import ChatPage from "@/pages/(business)/chat";
 import GeminiPage from "@/pages/(business)/gemini";
 import SimpleLayout from "@/components/SimpleLayout";
@@ -52,10 +51,6 @@ const router = createBrowserRouter([
         path: "",
         element: <SimpleLayout />,
         children: [
-          {
-            path: paths.SUBSCRIBE,
-            element: <SubscribePage />,
-          },
           {
             path: paths.CHAT.VIEW,
             element: <ChatPage />,

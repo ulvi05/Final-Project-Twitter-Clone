@@ -134,8 +134,8 @@ const create = async (req: Request, res: Response) => {
 
     const existingConversation = await Conversation.findOne({
       $or: [
-        { userId: req.user._id.toString(), recipientId: recipientId },
-        { userId: recipientId, recipientId: req.user._id.toString() },
+        { userId: req.user._id, recipientId },
+        { userId: recipientId, recipientId: req.user._id },
       ],
     });
 
