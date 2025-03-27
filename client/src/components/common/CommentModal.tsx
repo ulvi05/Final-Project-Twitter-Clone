@@ -15,6 +15,7 @@ import { useAppSelector } from "@/hooks/main";
 import { selectUserData } from "@/store/features/userSlice";
 import EmojiPicker, { Theme } from "emoji-picker-react";
 import { MdOutlineEmojiEmotions } from "react-icons/md";
+import { AxiosError } from "axios";
 
 const CommentModal = ({ post }: { post: PostType }) => {
   const { type, isOpen, postId, closeDialog } = useDialog();
@@ -56,7 +57,7 @@ const CommentModal = ({ post }: { post: PostType }) => {
       });
       toast.success("Comment deleted successfully");
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError) => {
       toast.error(error.message || "Failed to delete comment");
     },
   });

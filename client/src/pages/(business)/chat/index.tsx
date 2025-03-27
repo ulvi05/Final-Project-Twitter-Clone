@@ -91,7 +91,7 @@ export default function ChatPage() {
   useEffect(() => {
     if (status === "success" && chatData) {
       setMessages(
-        chatData?.data?.item.messages.map((msg) => ({
+        chatData?.data?.item.messages.map((msg: any) => ({
           ...msg,
           createdAt: new Date(msg.createdAt).toISOString(),
         }))
@@ -206,7 +206,7 @@ const MessageItem = ({
   return (
     <div
       className={cn(
-        "p-3 rounded-lg",
+        "p-3 rounded-lg message-item",
         owner ? "col-start-6 col-end-13" : "col-start-1 col-end-8"
       )}
     >
@@ -223,9 +223,11 @@ const MessageItem = ({
             className="w-8 h-8 rounded-full md:w-10 md:h-10"
           />
         ) : (
-          <div className="flex items-center justify-center flex-shrink-0 w-8 h-8 bg-indigo-500 rounded-full md:w-10 md:h-10">
-            User
-          </div>
+          <img
+            src={"/avatar-placeholder.png"}
+            alt="User Avatar"
+            className="w-8 h-8 rounded-full md:w-10 md:h-10"
+          />
         )}
         <div
           className={cn(

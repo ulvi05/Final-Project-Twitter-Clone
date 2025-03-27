@@ -14,8 +14,6 @@ import Posts from "@/components/common/Posts";
 import ProfileHeaderSkeleton from "@/components/skeletons/ProfileHeaderSkeleton";
 import EditProfileModal from "./EditProfileModal";
 
-import { POSTS } from "@/utils/db/dummy-data";
-
 import { FaArrowLeft, FaLink } from "react-icons/fa6";
 import { IoCalendarOutline } from "react-icons/io5";
 import { MdEdit } from "react-icons/md";
@@ -254,7 +252,7 @@ const ProfilePage = () => {
       )}
       {!isLoading && !isRefetching && user && (
         <>
-          <Header fullName={user.fullName} postCount={POSTS.length} />
+          <Header fullName={user.fullName} postCount={user.postCount} />
 
           <div className="relative">
             <CoverImage

@@ -10,7 +10,9 @@ import { comparePasswords, hashPassword } from "../utils/bcrypt";
 const getUserProfile = async (req: Request, res: Response) => {
   try {
     const { username } = req.params;
-    const user = await User.findOne({ username }).select("-password");
+    const user = await User.findOne({ username })
+      .select("-password")
+      .populate("postCount");
     if (!user) {
       res.status(404).json({ message: "User not found" });
       return;

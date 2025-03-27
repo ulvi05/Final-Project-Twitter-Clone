@@ -14,7 +14,7 @@ export type User = {
   likedPosts: string[];
   createdAt: string;
   updatedAt: string;
-  __v: 0;
+  postCount?: number;
 };
 
 export enum UserRole {
