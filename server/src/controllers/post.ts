@@ -341,6 +341,7 @@ const getBookmarkedPosts = async (req: Request, res: Response) => {
     const userId = req.user?._id;
 
     const posts = await Post.find({ bookmarks: userId })
+      .sort({ createdAt: -1 })
       .populate({
         path: "user",
         select: "-password",
